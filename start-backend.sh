@@ -1,0 +1,1 @@
+cd react-backend && npm start

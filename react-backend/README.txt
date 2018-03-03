@@ -1,0 +1,1 @@
+ SET DEBUG=react-backend:* & npm start
