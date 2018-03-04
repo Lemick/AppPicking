@@ -1,1 +1,1 @@
-cd react-app && npm start
+cd react-app && npm start --hot

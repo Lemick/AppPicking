@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import { Link, Route, Switch } from 'react-router-dom';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
 
 import Category from './Category';
 import Products from './Products';
