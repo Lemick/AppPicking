@@ -31,24 +31,27 @@ class App extends React.Component {
     fetch('/users')
       .then(res => res.json())
       .then(users => this.setState({ users }));
-    console.log('hey ' + this.state.users);
   }
 
 
   render() {
     return (
       <div>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-danger"> <Link className="navbar-brand" to="/">HuitNeufDix</Link>
-          <div class="container">
-              <ul class="navbar-nav nav-fill w-100">
-                <li class="nav-item">
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark"> <Link className="navbar-brand" to="/">HuitNeufDix</Link>
+          <div className="container">
+            <ul className="navbar-nav nav-fill w-100">
+              <li className="nav-item">
+                <h5>
                   <Link className="nav-link" to="/pickingGeneration">Génerer un groupement de commande</Link>
-                </li>
+                </h5>
+              </li>
 
-                <li class="nav-item">
+              <li className="nav-item">
+                <h5>
                   <Link className="nav-link" to="/alerts">Voir les alertes des stocks</Link>
-                </li>
-              </ul>
+                </h5>
+              </li>
+            </ul>
           </div>
         </nav>
 

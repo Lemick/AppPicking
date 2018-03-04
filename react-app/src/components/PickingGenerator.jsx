@@ -2,30 +2,38 @@ import React from 'react';
 import { Link, Route } from 'react-router-dom';
 
 
-
-
 class PickingGenerator extends React.Component {
 
     constructor(props) {
         super(props);
         let match = props.match;
-        this.state = { user: null };
+        this.state = {
+            userSelected: null,
+            availableUsers : []
+        };
         this.handleChange = this.handleChange.bind(this);
         this.logout = this.logout.bind(this);
     }
 
     handleChange(e) {
-        this.setState({ [e.target.name]: e.target.value });
-        console.log('Onchange executed : ' + e.target.name + ' ' + e.target.value);
-        this.state.user = e.target.value;
+        var value = this.state.availableUsers.filter(function(item) {
+            return item.id == e.target.value
+          })
+        this.setState({ userSelected :  value[0] });
     }
 
     logout(e) {
-        this.setState({ user: null })
+        this.setState({ userSelected: null })
+    }
+
+    componentDidMount() {
+        fetch('/users')
+            .then(res => res.json())
+            .then(availableUsers => this.setState({ availableUsers }));  
     }
 
     render() {
-        if (this.state.user == null) {
+        if (this.state.userSelected == null) {
             return (
                 <div className="container body-content">
                     <span className="text-center">
@@ -34,12 +42,9 @@ class PickingGenerator extends React.Component {
                     <div className="row">
                         <div className="col-md-6 offset-md-3">
                             <div className="form-group">
-                                <select className="form-control" onChange={this.handleChange}>
-                                    <option disabled defaultValue value> -- Veuillez sélectionner un utilisateur -- </option>
-                                    <option value="1">John</option>
-                                    <option value="2">Mary</option>
-                                    <option value="3">Zoe</option>
-                                    <option value="4">Mike</option>
+                                <select className="form-control"  onChange={this.handleChange}>
+                                    <option disabled selected="true"> -- Veuillez sélectionner un utilisateur -- </option>
+                                    { this.state.availableUsers.map(user => <option key={user.id} value={user.id}>{user.name} {user.surname}</option>) }
                                 </select>
                             </div>
                         </div>
@@ -54,10 +59,10 @@ class PickingGenerator extends React.Component {
                     <div className="col-md-6 offset-md-3">
                         <div className="card">
                             <div className="card-header text-center">
-                                <h5>Fiche de génération de picking de {this.state.user}</h5>
+                                <h5>Fiche de génération de picking de {this.state.userSelected.name} {this.state.userSelected.surname}</h5>
                             </div>
                             <div className="card-body">
-                                <p>Vous pouvez génerer un nouveau groupement si vous n'en avez déja pas un d'affecté</p>
+                                <p>Vous pouvez génerer un nouveau groupement de commandes si vous n'en avez déja pas un d'affecté</p>
                                 <div className="row">
                                     <div className="mx-auto">
                                         <button className="mx-2 btn btn-primary">Génerer un picking</button>
