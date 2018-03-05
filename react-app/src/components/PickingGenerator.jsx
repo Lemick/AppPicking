@@ -30,6 +30,7 @@ class PickingGenerator extends React.Component {
         fetch('/users')
             .then(res => res.json())
             .then(availableUsers => this.setState({ availableUsers }));  
+
     }
 
     render() {
