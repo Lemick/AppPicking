@@ -16,61 +16,61 @@ CREATE TABLE IF NOT EXISTS `UserPicker` (
 
 CREATE TABLE `Order`
 (
-    ID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    Date date,
-    Flag INT
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    date date,
+    isProcessed INT
 );
 
 CREATE TABLE `OrderItem`
 (
-    ID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    IDOrder INT,
-    IDProduct INT,
-    Quantity INT
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    idOrder INT,
+    idProduct INT,
+    quantity INT
 );
 
 CREATE TABLE `OrderPick`
 (
-    IDPicking INT,
-    IDOrder INT,
-    Flag INT
+    idPicking INT,
+    idOrder INT,
+    isProcessed INT
 );
 
 CREATE TABLE `Picking`
 (
-    ID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    IDUserPicker INT,
-    Flag INT
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    idUserPicker INT,
+    isProcessed INT
 );
 
 CREATE TABLE `Product`
 (
-    ID INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    Name VARCHAR(500),
-    Stock INT,
-    Weight FLOAT,
-    Alley CHAR,
-    Shelf INT,
-    Level INT,
-    Block INT,
-    Alert INT,
-    Flag INT
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    name VARCHAR(500),
+    stock INT,
+    weigth FLOAT,
+    alley CHAR,
+    shelf INT,
+    level INT,
+    block INT,
+    alert INT,
+    isDeleted INT
 );
 
 ALTER TABLE `OrderItem`
-ADD FOREIGN KEY (IDOrder) REFERENCES `Order`(ID);
+ADD FOREIGN KEY (idOrder) REFERENCES `Order`(id);
 
 ALTER TABLE `OrderItem`
-ADD FOREIGN KEY (IDProduct) REFERENCES `Product`(ID);
+ADD FOREIGN KEY (idProduct) REFERENCES `Product`(id);
 
 
 ALTER TABLE `OrderPick`
-ADD FOREIGN KEY (IDOrder) REFERENCES `Order`(ID);
+ADD FOREIGN KEY (idOrder) REFERENCES `Order`(id);
 
 ALTER TABLE `OrderPick`
-ADD FOREIGN KEY (IDPicking) REFERENCES `Picking`(ID);
+ADD FOREIGN KEY (idPicking) REFERENCES `Picking`(id);
 
-INSERT INTO `Product` (ID, Name, Stock, Weight, Alley, Shelf, Level, Block, Alert, Flag)
+INSERT INTO `Product` (id, name, stock, weigth, alley, shelf, level, block, alert, isDeleted)
 VALUES (1,
         'Stylo vert',
         100,
@@ -82,7 +82,7 @@ VALUES (1,
         0,
         1);
 
-INSERT INTO  `Product` (ID, Name, Stock, Weight, Alley, Shelf, Level, Block, Alert, Flag)
+INSERT INTO  `Product` (id, name, stock, weigth, alley, shelf, level, block, alert, isDeleted)
 VALUES (2,
         'Cable ethernet',
         100,
@@ -94,7 +94,7 @@ VALUES (2,
         0,
         1);
 
-INSERT INTO `Product` (ID, Name, Stock, Weight, Alley, Shelf, Level, Block, Alert, Flag)
+INSERT INTO `Product` (id, name, stock, weigth, alley, shelf, level, block, alert, isDeleted)
 VALUES (3,
         'HDMI to VGA',
         100,
@@ -114,14 +114,14 @@ INSERT INTO `UserPicker` (`id`, `name`, `surname`, `health`) VALUES
   (4, 'Steven', 'Cain', 30),
   (5, 'Linda', 'Hanston', 50);
         
-INSERT INTO `Order` (ID, Flag)
+INSERT INTO `Order` (id, isProcessed)
 VALUES (1, 1);
 
-INSERT INTO `OrderItem` (IDOrder, IDProduct, Quantity)
+INSERT INTO `OrderItem` (idOrder, idProduct, quantity)
 VALUES (1, 1, 2);
-INSERT INTO `OrderItem` (IDOrder, IDProduct, Quantity)
+INSERT INTO `OrderItem` (idOrder, idProduct, quantity)
 VALUES (1, 2, 2);
-INSERT INTO `OrderItem` (IDOrder, IDProduct, Quantity)
+INSERT INTO `OrderItem` (idOrder, idProduct, quantity)
 VALUES (1, 3, 4);
 
 

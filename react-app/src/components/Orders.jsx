@@ -8,63 +8,76 @@ class Orders extends React.Component {
         super(props);
         let match = props.match;
         this.state = {
-            orders: []
+            orders: [],
+            items: []
         };
     }
 
 
     componentDidMount() {
-        fetch('/orders')
+        fetch('/order/')
             .then(res => res.json())
-            .then(orders => this.setState({ orders }));
-
+            .then(orders => this.setState({ orders }, () => {
+                // Callback
+                for (var i = 0; i < this.state.orders.length; i++) {
+                    fetch('/order/' + this.state.orders[i].id + '/items')
+                        .then(res => res.json())
+                        .then(items => this.setState({ items }));
+                }
+            }));   
     }
 
     render() {
         return (
-            <div id="accordion">
-                <div class="card">
-                    <div class="card-header" id="headingOne">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Collapsible Group Item #1
-                            </button>
-                        </h5>
-                    </div>
+            <div> {console.log(this.state.items.length)}
+                {
+                    this.state.orders.map(order =>
+                        <div id="accordion">
+                            <div class="card">
+                                <div class="card-header" id="headingOne">
+                                    <h5 class="mb-0">
+                                        <button class="btn btn-link" data-toggle="collapse" data-target={ '#c' + order.id} aria-expanded="true" aria-controls="collapseOne">
+                                            Commande #{order.id}
+                                        </button>
+                                    </h5>
+                                </div>
 
-                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">First</th>
-                                    <th scope="col">Last</th>
-                                    <th scope="col">Handle</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">2</th>
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
-                                    <td>@fat</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">3</th>
-                                    <td>Larry</td>
-                                    <td>the Bird</td>
-                                    <td>@twitter</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                                <div id={ '#c' + order.id} class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">First</th>
+                                                <th scope="col">Last</th>
+                                                <th scope="col">Handle</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            <tr>
+                                                <th scope="row">1</th>
+                                                <td>Mark</td>
+                                                <td>Otto</td>
+                                                <td>@mdo</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">2</th>
+                                                <td>Jacob</td>
+                                                <td>Thornton</td>
+                                                <td>@fat</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">3</th>
+                                                <td>Larry</td>
+                                                <td>the Bird</td>
+                                                <td>@twitter</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    )}
             </div>
         )
     }

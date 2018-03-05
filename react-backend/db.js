@@ -6,9 +6,11 @@ var connection = mysql.createConnection({
   database: 'pickingapp'
 });
 
-connection.connect(function(err) {
-    if (err)
-        console.error('ERROR : Connection DB failed (check the config in db.js ?)');
+connection.connect(function (err) {
+  if (err)
+    console.error('ERROR : Connection DB failed (check the config in db.js)');
 });
+
+
 
 module.exports = connection;
