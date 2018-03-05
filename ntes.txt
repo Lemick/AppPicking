@@ -1,0 +1,6 @@
+L'interface web doit afficher 
+	les alertes de stock
+	une interface permettant de voir toutes les commandes, si elles sont traités, a qui elle est affecté, ou il en est dans son picking
+
+Un picker ne peut PAS avoir des commandes non entiéres ! (il peut en avoir 1 ou 2 , etc..)
+

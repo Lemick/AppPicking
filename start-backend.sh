@@ -1,4 +1,4 @@
 #cd react-backend && npm start --hot
 
 # utiliser quand nodemon pour le hot-reload
-cd react-backend && nodemon npm start
+cd react-backend && node app.js

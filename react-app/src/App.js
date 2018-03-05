@@ -1,7 +1,11 @@
 /* Import statements */
 import React, { Component } from 'react';
 import { Link, Route, Switch } from 'react-router-dom';
+
+import $ from 'jquery'; 
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import '../node_modules/bootstrap/dist/js/bootstrap.min.js';
+import '../node_modules/popper.js/dist/popper.min.js';
 import './App.css';
 
 import Category from './Category';
@@ -9,7 +13,7 @@ import Products from './Products';
 import Product from './Product';
 
 import Alerts from './components/Alerts';
-import PickingGenerator from './components/PickingGenerator';
+import Orders from './components/Orders';
 
 /* Home component */
 const Home = () => (
@@ -42,7 +46,7 @@ class App extends React.Component {
             <ul className="navbar-nav nav-fill w-100">
               <li className="nav-item">
                 <h5>
-                  <Link className="nav-link" to="/pickingGeneration">Génerer un groupement de commande</Link>
+                  <Link className="nav-link" to="/orders">Voir les commandes</Link>
                 </h5>
               </li>
 
@@ -60,7 +64,7 @@ class App extends React.Component {
 
         <Switch>
           <Route exact path="/" component={Home} />
-          <Route path="/pickingGeneration" component={PickingGenerator} />
+          <Route path="/orders" component={Orders} />
           <Route path="/alerts" component={Alerts} />
         </Switch>
 
