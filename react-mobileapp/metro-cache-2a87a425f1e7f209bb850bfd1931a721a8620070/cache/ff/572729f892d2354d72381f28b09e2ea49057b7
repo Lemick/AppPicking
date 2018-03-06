@@ -1,0 +1,265 @@
+__d(function (global, require, module, exports, _dependencyMap) {
+  var _react2 = require(_dependencyMap[0], "react");
+
+  var _react3 = _interopRequireDefault(_react2);
+
+  var _index = require(_dependencyMap[1], "./../../../../react-transform-hmr/lib/index.js");
+
+  var _index2 = _interopRequireDefault(_index);
+
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var _jsxFileName = "/Users/floriandemol/Documents/test/TestProject/MobileAppPicking/node_modules/tcomb-form-native/lib/templates/bootstrap/datepicker.ios.js";
+
+  var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+  var _propTypes = require(_dependencyMap[2], "prop-types");
+
+  var _propTypes2 = _interopRequireDefault(_propTypes);
+
+  var _reactNative = require(_dependencyMap[3], "react-native");
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+  function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+  function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+  var _components = {
+    CollapsibleDatePickerIOS: {
+      displayName: "CollapsibleDatePickerIOS"
+    }
+  };
+
+  var _reactTransformHmrLibIndexJs2 = (0, _index2.default)({
+    filename: "/Users/floriandemol/Documents/test/TestProject/MobileAppPicking/node_modules/tcomb-form-native/lib/templates/bootstrap/datepicker.ios.js",
+    components: _components,
+    locals: [module],
+    imports: [_react3.default]
+  });
+
+  function _wrapComponent(id) {
+    return function (Component) {
+      return _reactTransformHmrLibIndexJs2(Component, id);
+    };
+  }
+
+  var UIPICKER_HEIGHT = 216;
+
+  var CollapsibleDatePickerIOS = _wrapComponent("CollapsibleDatePickerIOS")(function (_React$Component) {
+    _inherits(CollapsibleDatePickerIOS, _React$Component);
+
+    function CollapsibleDatePickerIOS(props) {
+      _classCallCheck(this, CollapsibleDatePickerIOS);
+
+      var _this = _possibleConstructorReturn(this, (CollapsibleDatePickerIOS.__proto__ || Object.getPrototypeOf(CollapsibleDatePickerIOS)).call(this, props));
+
+      _this.state = {
+        isCollapsed: true,
+        height: new _reactNative.Animated.Value(0)
+      };
+      return _this;
+    }
+
+    _createClass(CollapsibleDatePickerIOS, [{
+      key: "render",
+      value: function render() {
+        var _this2 = this;
+
+        var locals = this.props.locals;
+        var stylesheet = locals.stylesheet;
+        var touchableStyle = stylesheet.dateTouchable.normal;
+        var datepickerStyle = stylesheet.datepicker.normal;
+        var dateValueStyle = stylesheet.dateValue.normal;
+
+        if (locals.hasError) {
+          touchableStyle = stylesheet.dateTouchable.error;
+          datepickerStyle = stylesheet.datepicker.error;
+          dateValueStyle = stylesheet.dateValue.error;
+        }
+
+        var formattedValue = String(locals.value);
+        var animation = _reactNative.Animated.timing;
+        var animationConfig = {
+          duration: 200
+        };
+
+        if (locals.config) {
+          if (locals.config.format) {
+            formattedValue = locals.config.format(locals.value);
+          }
+
+          if (locals.config.animation) {
+            animation = locals.config.animation;
+          }
+
+          if (locals.config.animationConfig) {
+            animationConfig = locals.config.animationConfig;
+          }
+        }
+
+        var height = this.state.isCollapsed ? 0 : UIPICKER_HEIGHT;
+        return _react3.default.createElement(
+          _reactNative.View,
+          {
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 51
+            }
+          },
+          _react3.default.createElement(
+            _reactNative.TouchableOpacity,
+            {
+              style: touchableStyle,
+              disabled: locals.disabled,
+              onPress: function onPress() {
+                animation(_this2.state.height, _extends({
+                  toValue: _this2.state.isCollapsed ? UIPICKER_HEIGHT : 0
+                }, animationConfig)).start();
+
+                _this2.setState({
+                  isCollapsed: !_this2.state.isCollapsed
+                });
+
+                if (typeof locals.onPress === "function") {
+                  locals.onPress();
+                }
+              },
+              __source: {
+                fileName: _jsxFileName,
+                lineNumber: 52
+              }
+            },
+            _react3.default.createElement(
+              _reactNative.Text,
+              {
+                style: dateValueStyle,
+                __source: {
+                  fileName: _jsxFileName,
+                  lineNumber: 71
+                }
+              },
+              formattedValue
+            )
+          ),
+          _react3.default.createElement(
+            _reactNative.Animated.View,
+            {
+              style: {
+                height: this.state.height,
+                overflow: "hidden"
+              },
+              __source: {
+                fileName: _jsxFileName,
+                lineNumber: 73
+              }
+            },
+            _react3.default.createElement(_reactNative.DatePickerIOS, {
+              ref: "input",
+              accessibilityLabel: locals.label,
+              date: locals.value,
+              maximumDate: locals.maximumDate,
+              minimumDate: locals.minimumDate,
+              minuteInterval: locals.minuteInterval,
+              mode: locals.mode,
+              onDateChange: function onDateChange(value) {
+                return locals.onChange(value);
+              },
+              timeZoneOffsetInMinutes: locals.timeZoneOffsetInMinutes,
+              style: [datepickerStyle, {
+                height: height
+              }],
+              __source: {
+                fileName: _jsxFileName,
+                lineNumber: 76
+              }
+            })
+          )
+        );
+      }
+    }]);
+
+    return CollapsibleDatePickerIOS;
+  }(_react3.default.Component));
+
+  CollapsibleDatePickerIOS.propTypes = {
+    locals: _propTypes2.default.object.isRequired
+  };
+
+  function datepicker(locals) {
+    if (locals.hidden) {
+      return null;
+    }
+
+    var stylesheet = locals.stylesheet;
+    var formGroupStyle = stylesheet.formGroup.normal;
+    var controlLabelStyle = stylesheet.controlLabel.normal;
+    var helpBlockStyle = stylesheet.helpBlock.normal;
+    var errorBlockStyle = stylesheet.errorBlock;
+
+    if (locals.hasError) {
+      formGroupStyle = stylesheet.formGroup.error;
+      controlLabelStyle = stylesheet.controlLabel.error;
+      helpBlockStyle = stylesheet.helpBlock.error;
+    }
+
+    var label = locals.label ? _react3.default.createElement(
+      _reactNative.Text,
+      {
+        style: controlLabelStyle,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 116
+        }
+      },
+      locals.label
+    ) : null;
+    var help = locals.help ? _react3.default.createElement(
+      _reactNative.Text,
+      {
+        style: helpBlockStyle,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 119
+        }
+      },
+      locals.help
+    ) : null;
+    var error = locals.hasError && locals.error ? _react3.default.createElement(
+      _reactNative.Text,
+      {
+        accessibilityLiveRegion: "polite",
+        style: errorBlockStyle,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 123
+        }
+      },
+      locals.error
+    ) : null;
+    return _react3.default.createElement(
+      _reactNative.View,
+      {
+        style: formGroupStyle,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 129
+        }
+      },
+      label,
+      _react3.default.createElement(CollapsibleDatePickerIOS, {
+        locals: locals,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 131
+        }
+      }),
+      help,
+      error
+    );
+  }
+
+  module.exports = datepicker;
+});
