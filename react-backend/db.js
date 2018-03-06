@@ -11,6 +11,4 @@ connection.connect(function (err) {
     console.error('ERROR : Connection DB failed (check the config in db.js)');
 });
 
-
-
 module.exports = connection;
