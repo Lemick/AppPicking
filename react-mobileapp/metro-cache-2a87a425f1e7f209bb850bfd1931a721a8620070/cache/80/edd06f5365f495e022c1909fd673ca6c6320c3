@@ -1,0 +1,7 @@
+__d(function (global, require, module, exports, _dependencyMap) {
+  var irreducible = require(_dependencyMap[0], './irreducible');
+
+  module.exports = irreducible('Error', function (x) {
+    return x instanceof Error;
+  });
+});
