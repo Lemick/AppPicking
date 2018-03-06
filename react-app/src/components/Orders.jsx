@@ -9,7 +9,7 @@ class Orders extends React.Component {
         let match = props.match;
         this.state = {
             orders: [],
-            items: []
+            products: []
         };
     }
 
@@ -20,16 +20,21 @@ class Orders extends React.Component {
             .then(orders => this.setState({ orders }, () => {
                 // Callback
                 for (var i = 0; i < this.state.orders.length; i++) {
-                    fetch('/order/' + this.state.orders[i].id + '/items')
+                    fetch('/order/' + this.state.orders[i].id + '/products')
                         .then(res => res.json())
-                        .then(items => this.setState({ items }));
+                        .then(function(products, i) {
+                            var ArrProducts = this.state.products;
+                            ArrProducts = products;
+                            this.setState({ ArrProducts});
+                        }.bind(this))
+                        
                 }
             }));   
     }
 
     render() {
         return (
-            <div> {console.log(this.state.items.length)}
+            <div> {console.log('products length ' + this.state.products.length)}
                 {
                     this.state.orders.map(order =>
                         <div id="accordion">

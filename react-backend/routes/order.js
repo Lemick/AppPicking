@@ -47,17 +47,24 @@ router.get('/:id/items', function (req, res, next) {
 
 router.get('/:id/products', function (req, res, next) {
     var id = req.params.id;
-
+    //  result[0]['id'] = { "nested1" : "lol", "nested2" : "lol2"};
     if (id == null) {
         res.sendStatus(404);
         return;
     }
 
-    db.query('SELECT product.id, name, stock, weigth, alley, shelf, level, block, alert, isDeleted' +
-     ' FROM ' + TABLE_ORDERITEM + ' RIGHT JOIN product ON orderitem.idProduct=product.id WHERE idOrder=?', [id], function (err, result) {
-        res.send(result)
+    
+    db.query('SELECT * FROM ' + TABLE_ORDERITEM + ' WHERE idorder=?', [id], function (err, orderRows) {
+        for (var i = 0; i < orderRows.length; i++) {
+            db.query('SELECT * FROM  product WHERE id=?', orderRows[i]['idProduct'], function (err, product) {
+                orderRows[i]['id'] = 300;
+            }).on('error', function (err) {
+                console.log("[mysql error]", err);
+            });
+        }
+        res.send(orderRows);
     }).on('error', function (err) {
-        console.log("[mysql error]", err);
+            console.log("[mysql error]", err);
     });
 });
 
