@@ -9,13 +9,14 @@ const TABLE_ORDERITEM = 'orderitem';
 router.get('/', function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
 
+    // Fetch Orders
     db.query('SELECT * FROM ' + TABLE_ORDER, function (err, orders) {
-
         async.forEachOf(orders, function (order, i, callbackOrder) {
+            // Fetch OrderItems
             db.query('SELECT * FROM orderitem WHERE idorder=?', order['id'], function (err, orderItems) {
-
                 order['orderItem'] = orderItems;
                 async.forEachOf(orderItems, function (orderItem, i, callbackOrderItem) {
+                    // Fetch Product
                     db.query('SELECT * FROM  product WHERE id=?', orderItem['idProduct'], function (err, product) {
                         orderItem['product'] = product[0];
                         callbackOrderItem();
@@ -82,8 +83,10 @@ router.get('/:id/products', function (req, res, next) {
         return;
     }
 
+    // Fetch Order
     db.query('SELECT * FROM ' + TABLE_ORDERITEM + ' WHERE idorder=?', [id], function (err, rows) {
         async.forEachOf(rows, function (row, i, callback) {
+            // Fetch Product
             db.query('SELECT * FROM  product WHERE id=?', row['idProduct'], function (err, product) {
                 row['product'] = product[0];
                 callback();

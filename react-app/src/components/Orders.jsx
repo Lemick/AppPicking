@@ -18,18 +18,36 @@ class Orders extends React.Component {
             .then(orders => this.setState({ orders }));
     }
 
-    getTotalWeight(order) {   
+    getOrderWeight(order) {
         var weigth = 0;
         var orderItem;
-        for(orderItem in order['orderItem']) {
-            weigth += orderItem['weigth']; 
+
+        order['orderItem'].forEach(function (orderItem) {
+            weigth += orderItem['product']['weigth'];
+        });
+        return weigth.toFixed(2);
+    }
+
+    getAssignationHTML(order) {
+        if (order.isProcessed == 1) {
+            return (
+                <span><i className="fa fa-circle" style={{ color: 'green' }} /> Assigné à Joe Todo </span>
+            );
+        } else {
+            return (
+                <span><i className="fa fa-circle" style={{ color: 'red' }} /> Non assigné </span>
+            );
         }
-        return weigth;
     }
 
     render() {
         return (
             <div>
+                <div className="my-3">
+                    <span className="text-center">
+                        <h3 className="text-center">Liste des commandes</h3>
+                    </span>
+                </div>
                 {
                     this.state.orders.map(order =>
                         <div id="accordion">
@@ -40,8 +58,11 @@ class Orders extends React.Component {
                                             Commande #{order.id}
                                         </h5>
                                     </button>
+                                    <span className="orderState">
+                                        {this.getAssignationHTML(order)}
+                                    </span>
                                     <span className="mb-0 float-right">
-                                        Poids total : {this.getTotalWeight(order)}kg
+                                        Poids total : {this.getOrderWeight(order)}kg
                                     </span>
                                 </div>
 
@@ -49,18 +70,20 @@ class Orders extends React.Component {
                                     <table className="table">
                                         <thead>
                                             <tr>
-                                                <th scope="col">ID Sous-Commande</th>
+                                                <th scope="col">ID sous-commande</th>
                                                 <th scope="col">Produit</th>
                                                 <th scope="col">Quantité</th>
+                                                <th scope="col">Poids sous-commande</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {
                                                 order['orderItem'].map(orderItem =>
                                                     <tr>
-                                                        <th scope="row">{orderItem.id}</th>
+                                                        <td scope="row">{orderItem.id}</td>
                                                         <td>{orderItem['product'].name}</td>
                                                         <td>x{orderItem.quantity}</td>
+                                                        <td>{orderItem['product'].weigth * orderItem.quantity}kg</td>
                                                     </tr>
                                                 )
                                             }

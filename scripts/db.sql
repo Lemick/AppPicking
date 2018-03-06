@@ -1,10 +1,10 @@
-DROP TABLE IF EXISTS UserPicker;
+DROP TABLE IF EXISTS `UserPicker`;
 DROP TABLE IF EXISTS `OrderItem`;
 DROP TABLE IF EXISTS `OrderPick`;
 DROP TABLE IF EXISTS `Order`;
 DROP TABLE IF EXISTS `Picking`;
 DROP TABLE IF EXISTS `Product`;
-
+DROP TABLE IF EXISTS `Alert`;
 
 CREATE TABLE IF NOT EXISTS `UserPicker` (
   `id` int(6) unsigned NOT NULL,
@@ -53,8 +53,17 @@ CREATE TABLE `Product`
     shelf INT,
     level INT,
     block INT,
-    alert INT DEFAULT 0,
     isDeleted INT DEFAULT 0
+);
+
+CREATE TABLE `Alert`
+(
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    creationTime      DATETIME DEFAULT   CURRENT_TIMESTAMP,
+    modificationTime  DATETIME ON UPDATE CURRENT_TIMESTAMP,
+    idProduct INT,
+    idUserPicker INT,
+    isHandled INT DEFAULT 0
 );
 
 ALTER TABLE `OrderItem`
@@ -69,6 +78,13 @@ ADD FOREIGN KEY (idOrder) REFERENCES `Order`(id);
 
 ALTER TABLE `OrderPick`
 ADD FOREIGN KEY (idPicking) REFERENCES `Picking`(id);
+
+
+ALTER TABLE `Alert`
+ADD FOREIGN KEY (idProduct) REFERENCES `Product`(id);
+
+ALTER TABLE `Alert`
+ADD FOREIGN KEY (idUserPicker) REFERENCES `UserPicker`(id);
 
 /*******************************
 *   INSERT INTO PRODUCTS
@@ -115,14 +131,19 @@ INSERT INTO `Order` (id) VALUES (2);
 *   INSERT INTO ORDERITEM
 *
 ********************************/
-INSERT INTO `OrderItem` (idOrder, idProduct, quantity)
-VALUES (1, 1, 2);
-INSERT INTO `OrderItem` (idOrder, idProduct, quantity)
-VALUES (1, 2, 2);
-INSERT INTO `OrderItem` (idOrder, idProduct, quantity)
-VALUES (1, 3, 4);
+INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (1, 1, 2);
+INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (1, 2, 2);
+INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (1, 3, 4);
+INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (2, 4, 2);
 
-INSERT INTO `OrderItem` (idOrder, idProduct, quantity)
-VALUES (2, 4, 2);
+
+/*******************************
+*   INSERT INTO ALERTS
+*
+********************************/
+
+INSERT INTO `Alert` (idProduct, idUserPicker) VALUES (2, 1);
+INSERT INTO `Alert` (idProduct, idUserPicker) VALUES (4, 1);
+INSERT INTO `Alert` (idProduct, idUserPicker) VALUES (2, 2);
 
 

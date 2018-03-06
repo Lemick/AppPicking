@@ -13,9 +13,7 @@ router.post('/', function (request, response, next) {
     if(health == null || userId == null) {
         response.send("-1");
     }
-
     
-
     response.send('true');    // echo the result back
 });
 
