@@ -8,75 +8,62 @@ class Orders extends React.Component {
         super(props);
         let match = props.match;
         this.state = {
-            orders: [],
-            products: []
+            orders: []
         };
     }
-
 
     componentDidMount() {
         fetch('/order/')
             .then(res => res.json())
-            .then(orders => this.setState({ orders }, () => {
-                // Callback
-                for (var i = 0; i < this.state.orders.length; i++) {
-                    fetch('/order/' + this.state.orders[i].id + '/products')
-                        .then(res => res.json())
-                        .then(function(products, i) {
-                            var ArrProducts = this.state.products;
-                            ArrProducts = products;
-                            this.setState({ ArrProducts});
-                        }.bind(this))
-                        
-                }
-            }));   
+            .then(orders => this.setState({ orders }));
+    }
+
+    getTotalWeight(order) {   
+        var weigth = 0;
+        var orderItem;
+        for(orderItem in order['orderItem']) {
+            weigth += orderItem['weigth']; 
+        }
+        return weigth;
     }
 
     render() {
         return (
-            <div> {console.log('products length ' + this.state.products.length)}
+            <div>
                 {
                     this.state.orders.map(order =>
                         <div id="accordion">
-                            <div class="card">
-                                <div class="card-header" id="headingOne">
-                                    <h5 class="mb-0">
-                                        <button class="btn btn-link" data-toggle="collapse" data-target={ '#c' + order.id} aria-expanded="true" aria-controls="collapseOne">
+                            <div className="card">
+                                <div className="card-header" id={'heading' + order.id}>
+                                    <button className="btn btn-link" data-toggle="collapse" data-target={'#c' + order.id} aria-expanded="false" aria-controls={'c' + order.id}>
+                                        <h5 className="mb-0">
                                             Commande #{order.id}
-                                        </button>
-                                    </h5>
+                                        </h5>
+                                    </button>
+                                    <span className="mb-0 float-right">
+                                        Poids total : {this.getTotalWeight(order)}kg
+                                    </span>
                                 </div>
 
-                                <div id={ '#c' + order.id} class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                                    <table class="table">
+                                <div id={'c' + order.id} className="collapse" aria-labelledby={'heading' + order.id} data-parent="#accordion">
+                                    <table className="table">
                                         <thead>
                                             <tr>
-                                                <th scope="col">#</th>
-                                                <th scope="col">First</th>
-                                                <th scope="col">Last</th>
-                                                <th scope="col">Handle</th>
+                                                <th scope="col">ID Sous-Commande</th>
+                                                <th scope="col">Produit</th>
+                                                <th scope="col">Quantité</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-
-                                            <tr>
-                                                <th scope="row">1</th>
-                                                <td>Mark</td>
-                                                <td>Otto</td>
-                                                <td>@mdo</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">2</th>
-                                                <td>Jacob</td>
-                                                <td>Thornton</td>
-                                                <td>@fat</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">3</th>
-                                                <td>Larry</td>
-                                                <td>the Bird</td>
-                                                <td>@twitter</td>
-                                            </tr>
+                                            {
+                                                order['orderItem'].map(orderItem =>
+                                                    <tr>
+                                                        <th scope="row">{orderItem.id}</th>
+                                                        <td>{orderItem['product'].name}</td>
+                                                        <td>x{orderItem.quantity}</td>
+                                                    </tr>
+                                                )
+                                            }
                                         </tbody>
                                     </table>
                                 </div>

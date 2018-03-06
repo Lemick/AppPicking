@@ -7,6 +7,7 @@ const TABLE_ORDER = '`order`';
 const TABLE_ORDERITEM = 'orderitem';
 
 router.get('/', function (req, res, next) {
+    res.setHeader('Content-Type', 'application/json');
 
     db.query('SELECT * FROM ' + TABLE_ORDER, function (err, orders) {
 
@@ -41,6 +42,7 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/:id', function (req, res, next) {
+    res.setHeader('Content-Type', 'application/json');
     var id = req.params.id;
 
     if (id == null) {
@@ -56,6 +58,7 @@ router.get('/:id', function (req, res, next) {
 });
 
 router.get('/:id/items', function (req, res, next) {
+    res.setHeader('Content-Type', 'application/json');
     var id = req.params.id;
 
     if (id == null) {
@@ -71,6 +74,7 @@ router.get('/:id/items', function (req, res, next) {
 });
 
 router.get('/:id/products', function (req, res, next) {
+    res.setHeader('Content-Type', 'application/json');
     var id = req.params.id;
 
     if (id == null) {
