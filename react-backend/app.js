@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
+var user = require('./routes/user');
 var picking = require('./routes/picking');
 var order = require('./routes/order');
 var alert = require('./routes/alert');
@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
  * ROUTAGE
 **/
 app.use('/', index);
-app.use('/user', users);
+app.use('/user', user);
 app.use('/picking', picking);
 app.use('/order', order);
 app.use('/alert', alert);

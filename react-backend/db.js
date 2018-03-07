@@ -1,4 +1,8 @@
-var mysql = require('mysql');
+const TABLE_ORDER = '`order`';
+
+var async = require('async');
+const mysql = require('mysql');
+
 var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',

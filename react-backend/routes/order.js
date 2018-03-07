@@ -1,53 +1,27 @@
 var express = require('express');
 var router = express.Router();
-var db = require('../db');
 var bodyParser = require('body-parser')
 var async = require('async');
+
+var db = require('../db');
+var dbUtils = require('../dbUtils');
+
 const TABLE_ORDER = '`order`';
 const TABLE_ORDERITEM = 'orderitem';
 
 /**
  * Params :
  * removeProcessed = false : Définit si les commandes deja affectées doivent apparaître
+ * orderByDate = null : Définit le tri par date de commande
  */
 router.get('/', function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
+    console.log(req.query.orderByDate);
+    var removeProcessed = req.query.removeProcessed == 'true';
+    var orderByDate = req.query.orderByDate;
 
-    console.log(req.query.removeProcessed);
-    var removeProcessedClause = ''
-    if (req.query.removeProcessed == 'true')
-        var removeProcessedClause = ' WHERE isProcessed=0'
-
-    // Fetch Orders
-    db.query('SELECT * FROM ' + TABLE_ORDER + removeProcessedClause, function (err, orders) {
-        async.forEachOf(orders, function (order, i, callbackOrder) {
-            // Fetch OrderItems
-            db.query('SELECT * FROM orderitem WHERE idorder=?', order['id'], function (err, orderItems) {
-                order['orderItem'] = orderItems;
-                async.forEachOf(orderItems, function (orderItem, i, callbackOrderItem) {
-                    // Fetch Product
-                    db.query('SELECT * FROM  product WHERE id=?', orderItem['idProduct'], function (err, product) {
-                        orderItem['product'] = product[0];
-                        callbackOrderItem();
-                    }).on('error', function (err) {
-                        console.log("[mysql error]", err);
-                    });
-                }, callbackOrder);
-
-            }).on('error', function (err) {
-                console.log("[mysql error]", err);
-            });
-        }, function (err) {
-            if (err) {
-                console.err(err);
-                res.sendStatus(500);
-            } else {
-                // after all the iterations are done
-                res.send(orders);
-            }
-        });
-    }).on('error', function (err) {
-        console.log("[mysql error]", err);
+    let orders = dbUtils.getOrders(removeProcessed, orderByDate, function(orders) {
+        res.send(orders);
     });
 });
 

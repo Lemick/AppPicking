@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link, Route } from 'react-router-dom';
 
-// Boostrap
-import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
-
 // Date formatting
 import Moment from 'moment';
+
+// Boostrap
+import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 // Boostrap dynamic table
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
@@ -53,8 +53,8 @@ class Alerts extends React.Component {
         return cell.id + ' (' + cell.name + ')';
     }
 
-    showWeigth(cell, row) {
-        return cell.weigth;
+    showWeight(cell, row) {
+        return cell.weight;
     }
 
     showStock(cell, row) {
@@ -66,7 +66,7 @@ class Alerts extends React.Component {
     }
 
     dateFormat(cell, row) {
-        if(!cell)
+        if (!cell)
             return '';
         return Moment(cell).format('DD/MM/YYYY hh:mm:ss');
     }
@@ -86,11 +86,13 @@ class Alerts extends React.Component {
                     <span className="text-center">
                         <h3 className="text-center">Liste des alertes</h3>
                     </span>
-                    <div className="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="searchi"><i className="fa fa-search"/></span>
+                    <div className="row justify-content-md-center">
+                        <div className="input-group col-sm-12 col-xl-6">
+                            <div className="input-group-prepend">
+                                <span className="input-group-text" id="searchi"><i className="fa fa-search" /></span>
+                            </div>
+                            <input type="text" name="name" placeholder="Filtrer les alertes" className="form-control" aria-describedby="searchi" onChange={this.handleSearchChange} />
                         </div>
-                        <input type="text" name="name" className="form-control" aria-describedby="searchi" onChange={this.handleSearchChange} />
                     </div>
 
                 </div>
@@ -102,7 +104,7 @@ class Alerts extends React.Component {
                         <TableHeaderColumn dataField='modificationTime' dataFormat={this.dateFormat}>Date de derniére modification</TableHeaderColumn>
                         <TableHeaderColumn dataField='product' dataFormat={this.showProductDescription}>Produit</TableHeaderColumn>
                         <TableHeaderColumn dataField='product' dataFormat={this.showStock}>Stock enregistré</TableHeaderColumn>
-                        <TableHeaderColumn dataField='product' dataFormat={this.showWeigth}>Poids</TableHeaderColumn>
+                        <TableHeaderColumn dataField='product' dataFormat={this.showWeight}>Poids</TableHeaderColumn>
                         <TableHeaderColumn dataField='userPicker' dataFormat={this.showOriginUser} dataSort sortFunc={this.sortFunc}>Origine de l'alerte</TableHeaderColumn>
                     </BootstrapTable>
                 </div>
