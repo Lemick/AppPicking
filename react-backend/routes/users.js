@@ -2,37 +2,23 @@ var express = require('express');
 var router = express.Router();
 var db = require('../db');
 
-/* GET users listing. */
-router.get('/test', function (req, res, next) {
-  // Comment out this line:
-  //res.send('respond with a resource');
+// Multiplicateur permettant de calculer linéairement le poids maximal alloué à un utilisateur
+const HEALTH_MULTIPLICATOR = 0.5; 
 
-  // And insert something like this instead:
-  res.json([{
-    id: 1,
-    username: "samsepi0l"
-  }, {
-    id: 2,
-    username: "D0loresH4ze"
-  }]);
+router.get('/:id/generatepicking', function (req, res, next) {
+  res.setHeader('Content-Type', 'application/json');
+  var id = req.params.id;
 
+  if (id == null) {
+    res.sendStatus(404);
+    return;
+  }
 
-  db.query('SELECT 2 + 3 AS solution', function (err, rows, fields) {
-    if (err)
-      throw err
+  db.query('SELECT * FROM userPicker WHERE id=?', [id], function (err, row) {
+    var user = row[0]; 
+  }).on('error', (err) => inner_callback(err));
 
-    console.log('The solution is: ', rows[0].solution);
-  })
-});
-
-
-router.get('/', function (req, res, next) {
-  db.query('SELECT * FROM userpicker', function (err, rows, fields) {
-    if (err)
-      throw err
-
-    res.json(rows);
-  })
+  
 });
 
 

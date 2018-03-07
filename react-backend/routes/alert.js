@@ -13,14 +13,14 @@ router.get('/', function (req, res, next) {
             async.parallel([
                 function (inner_callback) {
                     // Fetch user picker
-                    db.query('SELECT * FROM userPicker WHERE id=' + alert['idUserPicker'], function (err, userPicker) {
+                    db.query('SELECT * FROM userPicker WHERE id=?', alert['idUserPicker'], function (err, userPicker) {
                         alert['userPicker'] = userPicker[0];
                         inner_callback();
                     }).on('error', (err) => inner_callback(err));
                 },
                 function (inner_callback) {
                     // Fetch product
-                    db.query('SELECT * FROM product WHERE id=' + alert['idProduct'], function (err, product) {
+                    db.query('SELECT * FROM product WHERE id=?', alert['idProduct'], function (err, product) {
                         alert['product'] = product[0];
                         inner_callback();
                     }).on('error', (err) => inner_callback(err));

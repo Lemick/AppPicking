@@ -1,5 +1,0 @@
-__d(function (global, require, module, exports, _dependencyMap) {
-  module.exports = function fail(message) {
-    throw new TypeError('[tcomb] ' + message);
-  };
-});
