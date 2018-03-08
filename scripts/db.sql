@@ -127,6 +127,8 @@ INSERT INTO `UserPicker` (`id`, `name`, `surname`, `health`) VALUES
 INSERT INTO `Order` (id) VALUES (1);
 INSERT INTO `Order` (id) VALUES (2);
 
+INSERT INTO `Order` (id, isProcessed) VALUES (3, 1);
+
 /*******************************
 *   INSERT INTO ORDERITEM
 *
@@ -134,8 +136,10 @@ INSERT INTO `Order` (id) VALUES (2);
 INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (1, 1, 2);
 INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (1, 2, 2);
 INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (1, 3, 4);
+
 INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (2, 4, 2);
 
+INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (3, 5, 3);
 
 /*******************************
 *   INSERT INTO ALERTS

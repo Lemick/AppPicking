@@ -8,7 +8,7 @@ import '../node_modules/bootstrap/dist/js/bootstrap.min.js';
 import '../node_modules/popper.js/dist/popper.min.js';
 import '../node_modules/font-awesome/css/font-awesome.min.css'; 
 import './App.css';
-
+  
 import Category from './Category';
 import Products from './Products';
 import Product from './Product';

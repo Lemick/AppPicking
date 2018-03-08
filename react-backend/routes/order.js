@@ -6,11 +6,20 @@ var async = require('async');
 const TABLE_ORDER = '`order`';
 const TABLE_ORDERITEM = 'orderitem';
 
+/**
+ * Params :
+ * removeProcessed = false : Définit si les commandes deja affectées doivent apparaître
+ */
 router.get('/', function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
 
+    console.log(req.query.removeProcessed);
+    var removeProcessedClause = ''
+    if (req.query.removeProcessed == 'true')
+        var removeProcessedClause = ' WHERE isProcessed=0'
+
     // Fetch Orders
-    db.query('SELECT * FROM ' + TABLE_ORDER, function (err, orders) {
+    db.query('SELECT * FROM ' + TABLE_ORDER + removeProcessedClause, function (err, orders) {
         async.forEachOf(orders, function (order, i, callbackOrder) {
             // Fetch OrderItems
             db.query('SELECT * FROM orderitem WHERE idorder=?', order['id'], function (err, orderItems) {
@@ -24,7 +33,7 @@ router.get('/', function (req, res, next) {
                         console.log("[mysql error]", err);
                     });
                 }, callbackOrder);
-                
+
             }).on('error', function (err) {
                 console.log("[mysql error]", err);
             });
