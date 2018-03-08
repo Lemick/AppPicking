@@ -81,7 +81,7 @@ class Alerts extends React.Component {
 
     render() {
         return (
-            <div>
+            <div> 
                 <div className="my-3">
                     <span className="text-center">
                         <h3 className="text-center">Liste des alertes</h3>

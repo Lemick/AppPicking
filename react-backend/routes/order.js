@@ -20,7 +20,7 @@ router.get('/', function (req, res, next) {
     var removeProcessed = req.query.removeProcessed == 'true';
     var orderByDate = req.query.orderByDate;
 
-    let orders = dbUtils.getOrders(removeProcessed, orderByDate, function(orders) {
+    let orders = dbUtils.getOrders(removeProcessed, orderByDate, function (orders) {
         res.send(orders);
     });
 });
@@ -40,6 +40,29 @@ router.get('/:id', function (req, res, next) {
         console.log("[mysql error]", err);
     });
 });
+
+/**
+ * Récupére les infos de picking(s) lié à une commande
+ * (permet de voir l'utilisateur affecté, l'état d'avancement)
+ */
+router.get('/:id/pickings', function (req, res, next) {
+    res.setHeader('Content-Type', 'application/json');
+    var id = req.params.id;
+
+    if (id == null) {
+        res.sendStatus(404);
+        return;
+    }
+
+    db.query('SELECT idPicking, idOrder, idUserPicker, isFinished, name AS userPickerName, surname as userPickerSurname FROM `orderpick` ' +
+        'LEFT JOIN picking on orderpick.idPicking = picking.id LEFT JOIN userpicker ON picking.idUserPicker = userpicker.id ' +
+        'WHERE idOrder=? ', [id], function (err, result) {
+            res.send(result)
+        }).on('error', function (err) {
+            console.log("[mysql error]", err);
+        });
+});
+
 
 router.get('/:id/items', function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');

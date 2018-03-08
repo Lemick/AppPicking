@@ -31,14 +31,16 @@ CREATE TABLE `OrderItem`
 
 CREATE TABLE `OrderPick`
 (
-    idPicking INT,
-    idOrder INT
+    idPicking INT, 
+    idOrder INT,
+    PRIMARY KEY(idOrder, idPicking)
 );
 
 CREATE TABLE `Picking`
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    idUserPicker INT
+    idUserPicker INT,
+    isFinished INT DEFAULT 0
 );
 
 CREATE TABLE `Product`
@@ -123,7 +125,6 @@ INSERT INTO `UserPicker` (`id`, `name`, `surname`, `health`) VALUES
 
 INSERT INTO `Order` (id, date) VALUES (1, NOW() + INTERVAL 1 HOUR);
 INSERT INTO `Order` (id, date) VALUES (2, NOW() + INTERVAL 2 HOUR);
-
 INSERT INTO `Order` (id, date) VALUES (3, NOW() + INTERVAL 3 HOUR);
 
 /*******************************
@@ -137,6 +138,23 @@ INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (1, 3, 4);
 INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (2, 4, 2);
 
 INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (3, 5, 3);
+
+/*******************************
+*   INSERT INTO PICKING
+*
+********************************/
+
+INSERT INTO `Picking` (id, idUserPicker, isFinished) VALUES (1, 1, 1);
+INSERT INTO `Picking` (id, idUserPicker, isFinished) VALUES (2, 3, 0);
+
+/*******************************
+*   INSERT INTO ORDER PICK
+*
+********************************/
+
+INSERT INTO `OrderPick` (idPicking, idOrder) VALUES (1, 1);
+INSERT INTO `OrderPick` (idPicking, idOrder) VALUES (2, 3);
+
 
 /*******************************
 *   INSERT INTO ALERTS
