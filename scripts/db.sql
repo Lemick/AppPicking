@@ -17,8 +17,7 @@ CREATE TABLE IF NOT EXISTS `UserPicker` (
 CREATE TABLE `Order`
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    date date,
-    isProcessed INT DEFAULT 0
+    date DATETIME
 );
 
 CREATE TABLE `OrderItem`
@@ -26,21 +25,22 @@ CREATE TABLE `OrderItem`
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     idOrder INT,
     idProduct INT,
-    quantity INT
+    quantity INT,
+    quantityPicked INT DEFAULT 0
 );
 
 CREATE TABLE `OrderPick`
 (
-    idPicking INT,
+    idPicking INT, 
     idOrder INT,
-    isProcessed INT
+    PRIMARY KEY(idOrder, idPicking)
 );
 
 CREATE TABLE `Picking`
 (
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     idUserPicker INT,
-    isProcessed INT DEFAULT 0
+    isFinished INT DEFAULT 0
 );
 
 CREATE TABLE `Product`
@@ -48,12 +48,11 @@ CREATE TABLE `Product`
     id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     name VARCHAR(500),
     stock INT,
-    weigth FLOAT,
+    weight FLOAT,
     alley CHAR,
     shelf INT,
     level INT,
-    block INT,
-    isDeleted INT DEFAULT 0
+    block INT
 );
 
 CREATE TABLE `Alert`
@@ -90,19 +89,19 @@ ADD FOREIGN KEY (idUserPicker) REFERENCES `UserPicker`(id);
 *   INSERT INTO PRODUCTS
 *
 ********************************/
-INSERT INTO `Product` (id, name, stock, weigth, alley, shelf, level, block)
+INSERT INTO `Product` (id, name, stock, weight, alley, shelf, level, block)
 VALUES (1, 'Stylo vert', 100, 0.1, 'A', 4, 6, 8);
 
-INSERT INTO `Product` (id, name, stock, weigth, alley, shelf, level, block)
+INSERT INTO `Product` (id, name, stock, weight, alley, shelf, level, block)
 VALUES (2, 'Stylo bleu', 100, 0.1, 'B', 5, 8, 10);
 
-INSERT INTO `Product` (id, name, stock, weigth, alley, shelf, level, block)
+INSERT INTO `Product` (id, name, stock, weight, alley, shelf, level, block)
 VALUES (3, 'Stylo rouge', 100, 0.1, 'C', 6, 1, 4);
 
-INSERT INTO `Product` (id, name, stock, weigth, alley, shelf, level, block)
+INSERT INTO `Product` (id, name, stock, weight, alley, shelf, level, block)
 VALUES (4, 'Dechiqueteuse à papier', 100, 20, 'F', 2, 4, 5);
 
-INSERT INTO `Product` (id, name, stock, weigth, alley, shelf, level, block)
+INSERT INTO `Product` (id, name, stock, weight, alley, shelf, level, block)
 VALUES (5, 'TV Phillips HD201', 100, 28, 'D', 2, 1, 4);
 
 
@@ -124,10 +123,9 @@ INSERT INTO `UserPicker` (`id`, `name`, `surname`, `health`) VALUES
 *
 ********************************/
 
-INSERT INTO `Order` (id) VALUES (1);
-INSERT INTO `Order` (id) VALUES (2);
-
-INSERT INTO `Order` (id, isProcessed) VALUES (3, 1);
+INSERT INTO `Order` (id, date) VALUES (1, NOW() + INTERVAL 1 HOUR);
+INSERT INTO `Order` (id, date) VALUES (2, NOW() + INTERVAL 2 HOUR);
+INSERT INTO `Order` (id, date) VALUES (3, NOW() + INTERVAL 3 HOUR);
 
 /*******************************
 *   INSERT INTO ORDERITEM
@@ -140,6 +138,23 @@ INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (1, 3, 4);
 INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (2, 4, 2);
 
 INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (3, 5, 3);
+
+/*******************************
+*   INSERT INTO PICKING
+*
+********************************/
+
+INSERT INTO `Picking` (id, idUserPicker, isFinished) VALUES (1, 1, 1);
+INSERT INTO `Picking` (id, idUserPicker, isFinished) VALUES (2, 3, 0);
+
+/*******************************
+*   INSERT INTO ORDER PICK
+*
+********************************/
+
+INSERT INTO `OrderPick` (idPicking, idOrder) VALUES (1, 1);
+INSERT INTO `OrderPick` (idPicking, idOrder) VALUES (2, 3);
+
 
 /*******************************
 *   INSERT INTO ALERTS

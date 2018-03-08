@@ -6,6 +6,13 @@ body {
   margin-top: 10%;
 }
 
-.cell-marked td{
-  border-top: 1px solid #777;
+.orderLeftBtn {
+  margin-right: 25px;
+}
+
+.table {
+  border-radius: 5px;
+  width: 100%;
+  margin: 0px auto;
+  float: none;
 }

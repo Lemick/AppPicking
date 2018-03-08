@@ -30,19 +30,13 @@ class App extends React.Component {
     super(props);
   }
 
-  state = { users: [] }
-
-  componentDidMount() {
-    fetch('/users')
-      .then(res => res.json())
-      .then(users => this.setState({ users }));
-  }
-
-
   render() {
     return (
       <div>
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark"> <Link className="navbar-brand" to="/">HuitNeufDix</Link>
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark"> 
+        <Link className="navbar-brand" to="/">
+            <img height="50px" src="https://sendeyo.com/up/108a9de7a43a024510fa65b8becb9148.svg"/>
+        </Link>
           <div className="container">
             <ul className="navbar-nav nav-fill w-100">
               <li className="nav-item">
@@ -68,14 +62,6 @@ class App extends React.Component {
           <Route path="/orders" component={Orders} />
           <Route path="/alerts" component={Alerts} />
         </Switch>
-
-
-        { /**
-        <div className="App">
-          <h1>Users</h1>
-          { this.state.users.map(user => <div key={user.id}>{user.username}</div>  )}
-        </div>
-        **/}
 
       </div>
     )

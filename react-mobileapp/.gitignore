@@ -64,4 +64,5 @@ node_modules
 *.js.meta
 
 /coverage
+<<<<<<< HEAD
 /third-party

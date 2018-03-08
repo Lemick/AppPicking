@@ -3,7 +3,6 @@ var router = express.Router();
 var db = require('../db');
 var bodyParser = require('body-parser')
 
-const HEALTH_MULTIPLICATOR = 0.5;
 
 router.post('/', function (request, response, next) {
     console.log(request.body.test);      // your JSON
