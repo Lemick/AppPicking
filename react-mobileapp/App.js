@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import LoginScreen from './src/components/login.js';
+import LoginScreen from './src/components/LoginScreen.js';
 import PickingScreen from './src/components/PickingScreen';
 import { StackNavigator } from 'react-navigation';
 
