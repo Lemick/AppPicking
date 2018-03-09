@@ -4,39 +4,36 @@ import { ScrollView, TextInput } from "react-native-gesture-handler";
 import Container from "./Container";
 import Label from "./Label";
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight, Picker } from 'react-native';
 import t from 'tcomb-form-native';
 
-var Form = t.form.Form;
-
-var Person = t.struct({
-    Utilisateur: t.String,              // a required string
-    'Mot de passe': t.String  // password
-  });
-
-var options = {
-    fields:{
-        'Mot de passe':{
-            password: true,
-            secureTextEntry: true
-        }
-    }
-};
-
 export default class Login extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+          state: 'Java'
+        }
+      }
+
     render() {
         return (
             <View style={styles.container}>
                 {/* display */}
                 <Text style={styles.title}> HuitNeufDis </Text>
-                <Form
-                    ref="form"
-                    type={Person}
-                    options = {options}
-                />
+                <Text style={styles.titlePicker}> Selectionnez votre profil : </Text>
+                <Picker
+                    selectedValue={this.state.language}
+                    onValueChange={(itemValue, itemIndex) => this.setState({language: itemValue})}>
+                    <Picker.Item label="Pierrot" value="pierre" />
+                    <Picker.Item label="Michel" value="michel" />
+                    <Picker.Item label="Jacques" value="jacques" />
+                    <Picker.Item label="Pierre-Henry" value="ph" />
+                    <Picker.Item label="Jean Dujardin" value="jd" />
+                </Picker>
                 <TouchableHighlight style={styles.button} onPress={this.onPress} underlayColor='#99d9f4'>
-                    <Text style={styles.buttonText}>Save</Text>
-                </TouchableHighlight>
+                    <Text style={styles.buttonText}>Se Connecter</Text>
+                </TouchableHighlight>    
             </View>      
         );
     }
@@ -53,7 +50,11 @@ const styles = StyleSheet.create({
       title: {
         fontSize: 30,
         alignSelf: 'center',
-        marginBottom: 60
+        marginBottom: 110
+      },
+      titlePicker: {
+        fontSize: 20,
+        alignSelf: 'center'
       },
       buttonText: {
         fontSize: 18,
@@ -68,6 +69,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginBottom: 10,
         alignSelf: 'stretch',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginTop: 40
       },
 });
