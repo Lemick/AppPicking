@@ -104,7 +104,7 @@ export default class PickingScreen extends Component {
                         <Row size={5} />
                         <Row size={35}>
                             <Button outline primary style={styles.waitingButton}>
-                                <Text>En attente de scan du produit via NFC{this.state.dots}</Text>
+                                <Text>En attente du scan du produit via NFC{this.state.dots}</Text>
                             </Button>
                         </Row>
                     </Grid>
