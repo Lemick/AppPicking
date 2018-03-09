@@ -3,17 +3,31 @@ var router = express.Router();
 var db = require('../db');
 var bodyParser = require('body-parser')
 
+router.get('/', function (req, res, next) {
+    res.send("picking entry point")
+});
 
-router.post('/', function (request, response, next) {
-    console.log(request.body.test);      // your JSON
-    var health = request.body.health;
-    var userId = request.body.id;
 
-    if(health == null || userId == null) {
-        response.send("-1");
+router.get('/:id/orderitems', function (req, res, next) {
+    res.setHeader('Content-Type', 'application/json');
+    var id = req.params.id;
+
+    if (id == null) {
+        res.sendStatus(404);
+        return;
     }
-    
-    response.send('true');    // echo the result back
+
+    var query = 'SELECT orderitem.id AS orderitemId, quantity, quantityPicked, idProduct,' +
+                'name, stock, weight, alley, shelf, level, block ' +
+                'FROM `orderpick` ' +
+                'JOIN orderitem ON orderpick.idOrder = orderitem.idOrder ' +
+                'JOIN product ON orderitem.idProduct = product.id ' +
+                'WHERE idPicking=? '
+    db.query(query, [id], function (err, result) {
+        res.send(result)
+    }).on('error', function (err) {
+        console.log("[mysql error]", err);
+    });
 });
 
 

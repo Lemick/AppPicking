@@ -66,7 +66,7 @@ module.exports = {
                 var sqlOrderPickValues = '';
                 for (var i = 0; i < idsOrder.length; i++) {
                     sqlOrderPickValues += '(' + resPicking.insertId + ',' + idsOrder[i] + ')';
-                    if (i < idsOrder.length-1)
+                    if (i < idsOrder.length - 1)
                         sqlOrderPickValues += ',';
                 }
                 console.log(sqlOrderPick + sqlOrderPickValues);
@@ -83,5 +83,14 @@ module.exports = {
                 _callback(null);
             }
         });
+    },
+
+    getAllUsersPicker: function (_callback) {
+        db.query('SELECT * FROM userPicker', function (err, users) {
+            _callback(users);
+        }).on('error', function (err) {
+            console.log("[mysql error]", err);
+        });
     }
+
 };

@@ -16,7 +16,7 @@ const TABLE_ORDERITEM = 'orderitem';
  */
 router.get('/', function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
-    console.log(req.query.orderByDate);
+
     var removeProcessed = req.query.removeProcessed == 'true';
     var orderByDate = req.query.orderByDate;
 

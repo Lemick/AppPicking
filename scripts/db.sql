@@ -139,6 +139,17 @@ INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (2, 4, 2);
 
 INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (3, 5, 3);
 
+
+/*******************************
+*   INSERT INTO ORDER PICK
+*
+********************************/
+
+INSERT INTO `OrderPick` (idPicking, idOrder) VALUES (1, 3);
+
+INSERT INTO `OrderPick` (idPicking, idOrder) VALUES (2, 1);
+INSERT INTO `OrderPick` (idPicking, idOrder) VALUES (2, 2);
+
 /*******************************
 *   INSERT INTO PICKING
 *
@@ -146,14 +157,6 @@ INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (3, 5, 3);
 
 INSERT INTO `Picking` (id, idUserPicker, isFinished) VALUES (1, 1, 1);
 INSERT INTO `Picking` (id, idUserPicker, isFinished) VALUES (2, 3, 0);
-
-/*******************************
-*   INSERT INTO ORDER PICK
-*
-********************************/
-
-INSERT INTO `OrderPick` (idPicking, idOrder) VALUES (1, 1);
-INSERT INTO `OrderPick` (idPicking, idOrder) VALUES (2, 3);
 
 
 /*******************************

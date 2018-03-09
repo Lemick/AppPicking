@@ -13,6 +13,37 @@ router.get('/test', function (req, res, next) {
 
 });
 
+
+router.get('/', function (req, res, next) {
+  res.setHeader('Content-Type', 'application/json');
+
+  dbUtils.getAllUsersPicker(function (users) {
+    res.send(users);
+  });
+});
+
+
+router.get('/:id/picking', function (req, res, next) {
+  res.setHeader('Content-Type', 'application/json');
+  var id = req.params.id;
+
+  if (id == null) {
+    res.sendStatus(404);
+    return;
+  }
+
+  // Fetch picking
+  db.query('SELECT * FROM picking WHERE idUserPicker=?', [id], function (err, row) {
+    if(row) {
+      res.send(row);
+    } else {
+      res.send("");
+    }
+  }).on('error', (err) => console.log("[mysql error]", err));
+
+});
+
+
 /**
  * TODO : renvoyer id du nouveau picking, si déja un picking existant renvoyer l'id du picking ?
  */
@@ -31,7 +62,7 @@ router.get('/:id/generatepicking', function (req, res, next) {
 
   // Fetch user
   db.query('SELECT * FROM userPicker WHERE id=?', [id], function (err, row) {
-    var user = row[0]; 
+    var user = row[0];
     /**
      * TODO : On pourrait ici mettre un LIMIT pour ne pas avoir a parcourir l'ensemble des commandes pour calculer le groupements de comande
      */
@@ -45,7 +76,7 @@ router.get('/:id/generatepicking', function (req, res, next) {
           assignedOrders.push(orders.id);
           currentWeight = order.weight;
         }
-        dbUtils.insertPicking(idUser, assignedOrders, function(newPickingId) {
+        dbUtils.insertPicking(idUser, assignedOrders, function (newPickingId) {
           res.send(newPickingId.toString());
         });
       }
