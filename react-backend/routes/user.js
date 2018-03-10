@@ -35,7 +35,7 @@ router.get('/:id/picking', function (req, res, next) {
   // Fetch picking
   db.query('SELECT * FROM picking WHERE idUserPicker=?', [id], function (err, row) {
     if(row) {
-      res.send(row);
+      res.send(row[0]);
     } else {
       res.send("");
     }

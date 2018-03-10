@@ -7,8 +7,9 @@ import { Col, Row, Grid } from "react-native-easy-grid";
 
 import Label from "./Label";
 import { resetNavigation } from '../NavigationUtils';
-import GLOBAL from '../GlobalConst';
+import Constants from '../GlobalConst';
 import Footer from './Footer';
+import Profile from './Profile';
 
 import {
     Container,
@@ -20,9 +21,7 @@ import {
     H3,
     Card,
     CardItem,
-
 } from "native-base";
-
 
 
 export default class PickingScreen extends Component {
@@ -37,31 +36,48 @@ export default class PickingScreen extends Component {
         this.state = {
             user: this.props.navigation.state.params.user,
             picking: null,
+            activeTab: Constants.TabEnum.Picking,
             dots: '',
         }
 
+        // Binding
         this.disconnect = this.disconnect.bind(this);
         this.tick = this.tick.bind(this);
-
+        this.showProfile = this.showProfile.bind(this);
+        this.showPicking = this.showPicking.bind(this);
+        this.showListing = this.showListing.bind(this);
     }
 
     componentWillMount() {
         console.log(this.state.user);
-        fetch(GLOBAL.API_URL + '/user/' + this.state.user.id + '/picking/')
+        fetch(Constants.API_URL + '/user/' + this.state.user.id + '/picking/')
             .then((res) => res.text())
             .then((text) => text.length ? JSON.parse(text) : {})
             .then(picking => {
-                if (picking && picking.length > 0) {
-                    this.setState({ picking });
+                // Si picking en cours on va chercher la liste des produits de la commande
+                if (picking) {
+                    fetch(Constants.API_URL + '/picking/' + picking.id + '/orderitems/')
+                        .then((res) => res.text())
+                        .then((text) => text.length ? JSON.parse(text) : {})
+                        .then(orderitems => {
+                            picking['items'] = orderitems;
+                            console.log(picking);
+                            this.setState({ picking }, () => {
+                                this.timerDots = setInterval(this.tick, 1000);
+                            })
+                        }).catch((error) => console.log(error));
+
                 }
             }).catch((error) => console.log(error));
     }
 
     componentDidMount() {
-        this.timerDots = setInterval(this.tick, 1000);
+
     }
+
     componentWillUnmount() {
-        clearInterval(this.timerDots);
+        if (this.timerDots)
+            clearInterval(this.timerDots);
     }
 
     tick() {
@@ -73,23 +89,65 @@ export default class PickingScreen extends Component {
         resetNavigation(this, 'Login');
     }
 
+    showProfile() {
+        this.setState({ activeTab: Constants.TabEnum.Profile });
+    }
+
+    showPicking() {
+        this.setState({ activeTab: Constants.TabEnum.Picking });
+    }
+
+    showListing() {
+        this.setState({ activeTab: Constants.TabEnum.Listing });
+    }
+
     render() {
         const { navigate } = this.props.navigation;
+        const _Footer = () => {
+            return (
+                <Footer showProfile={this.showProfile} showListing={this.showListing} showPicking={this.showPicking} activeTab={this.state.activeTab} />
+            );
+        }
 
         /**
-         * Affichage du picking en cours
+         * Affichage du profil
          */
-        if (this.state.picking != null) {
+        if (this.state.activeTab == Constants.TabEnum.Profile) {
             return (
                 <Container>
+                    <Profile onPressDisconnect={this.disconnect} />
+                    <_Footer />
 
+                </Container >
+            )
+        }
+
+        /**
+         * Affichage de la liste des produits du picking en cours
+         */
+        if (this.state.activeTab == Constants.TabEnum.Listing) {
+            return (
+                <Container>
+                    <Text>liste produits</Text>
+                    <Row />
+                    <_Footer />
+                </Container >
+            )
+        }
+
+
+        /**
+         * Interface d'affichage du picking en cours
+         */
+        if (this.state.picking) {
+            return (
+                <Container>
                     <Grid>
                         <Row size={5} />
-
                         <Row size={55}>
                             <Card style={styles.item}>
                                 <CardItem header>
-                                    <Text>NativeBase</Text>
+                                    <Text>ID</Text>
                                 </CardItem>
                                 <CardItem>
                                     <Text>
@@ -109,7 +167,7 @@ export default class PickingScreen extends Component {
                         </Row>
                     </Grid>
 
-                    <Footer onPressDisconnect={this.disconnect} />
+                    <_Footer />
                 </Container >
             );
         }
@@ -135,7 +193,7 @@ export default class PickingScreen extends Component {
                     </Grid>
 
                 </Body>
-                <Footer onPressDisconnect={this.disconnect} />
+                <_Footer />
             </Container>
         );
     }

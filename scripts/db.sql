@@ -49,7 +49,7 @@ CREATE TABLE `Product`
     name VARCHAR(500),
     stock INT,
     weight FLOAT,
-    alley CHAR,
+    alley INT,
     shelf INT,
     level INT,
     block INT
@@ -90,19 +90,19 @@ ADD FOREIGN KEY (idUserPicker) REFERENCES `UserPicker`(id);
 *
 ********************************/
 INSERT INTO `Product` (id, name, stock, weight, alley, shelf, level, block)
-VALUES (1, 'Stylo vert', 100, 0.1, 'A', 4, 6, 8);
+VALUES (1, 'Stylo vert', 87, 0.1, 1, 4, 6, 8);
 
 INSERT INTO `Product` (id, name, stock, weight, alley, shelf, level, block)
-VALUES (2, 'Stylo bleu', 100, 0.1, 'B', 5, 8, 10);
+VALUES (2, 'Stylo bleu', 130, 0.1, 1, 5, 8, 10);
 
 INSERT INTO `Product` (id, name, stock, weight, alley, shelf, level, block)
-VALUES (3, 'Stylo rouge', 100, 0.1, 'C', 6, 1, 4);
+VALUES (3, 'Stylo rouge', 122, 0.1, 2, 6, 1, 4);
 
 INSERT INTO `Product` (id, name, stock, weight, alley, shelf, level, block)
-VALUES (4, 'Dechiqueteuse à papier', 100, 20, 'F', 2, 4, 5);
+VALUES (4, 'Dechiqueteuse à papier', 23, 20, 2, 2, 4, 5);
 
 INSERT INTO `Product` (id, name, stock, weight, alley, shelf, level, block)
-VALUES (5, 'TV Phillips HD201', 100, 28, 'D', 2, 1, 4);
+VALUES (5, 'TV Phillips HD201', 17, 28, 3, 2, 1, 4);
 
 
 /*******************************

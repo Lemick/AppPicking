@@ -63,7 +63,8 @@ export default class Login extends Component {
                     {
                         this.state.users.map(user =>
                             <Picker.Item label={user.name + ' ' + user.surname} value={user.id} key={user.id} />
-                        )}
+                        )
+                    }
                 </Picker>
                 <TouchableHighlight style={styles.button} onPress={this.onPress} underlayColor='#99d9f4'>
                     <Text style={styles.buttonText}>Se Connecter</Text>
