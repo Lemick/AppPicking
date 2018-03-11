@@ -1,19 +1,22 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import LoginScreen from './src/components/LoginScreen.js';
-import PickingScreen from './src/components/PickingScreen';
 import { StackNavigator } from 'react-navigation';
 
+import LoginScreen from './src/components/LoginScreen.js';
+import PickingScreen from './src/components/PickingScreen';
 
-const NavigatorApp = StackNavigator({
-  Login: { screen: LoginScreen },
-  Picking: { screen: PickingScreen },
-},
-  { headerMode: 'screen' }
+const NavigatorApp = StackNavigator(
+  {
+    Login: { screen: LoginScreen },
+    Picking: { screen: PickingScreen },
+  },
+  {
+    headerMode: 'screen'
+  },
 );
 
-export default class App extends React.Component {
 
+export default class App extends React.Component {
 
   // Load fonts before app rendering
   async componentWillMount() {
