@@ -78,7 +78,8 @@ export default class Login extends Component {
                     <Picker
                         selectedValue={this.state.userSelected == null ? 0 : this.state.userSelected.id}
                         onValueChange={(itemValue) => this.onCBUserChange(itemValue)}>
-                        <Picker.Item label='Sélectionner un utilisateur...' value='0' />
+                        <Picker.Item mode="dropdown" iosHeader="Sélectionner un utilisateur"
+                            label='Sélectionner un utilisateur...' value='0' />
                         {
                             this.state.users.map(user =>
                                 <Picker.Item label={user.name + ' ' + user.surname} value={user.id} key={user.id} />
@@ -102,7 +103,7 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         padding: 20,
-        backgroundColor: '#fafafa',
+        backgroundColor: '#F4F5F7',
         flex: 1,
     },
     title: {
@@ -120,6 +121,6 @@ const styles = StyleSheet.create({
     },
     picker: {
         borderWidth: 1,
-        borderColor: '#e0e0e0',
+        borderColor: '#D3D3D3',
     }
 });

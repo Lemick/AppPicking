@@ -24,6 +24,9 @@ import {
     CardItem,
     Badge,
     Spinner,
+    Content,
+    List,
+    ListItem,
 } from "native-base";
 
 
@@ -31,7 +34,6 @@ export default class PickingScreen extends Component {
 
     static navigationOptions = ({ navigation }) => ({
         title: typeof (navigation.state.params) === 'undefined' || typeof (navigation.state.params.title) === 'undefined' ? 'Picking' : navigation.state.params.title,
-        headerLeft: null,
     });
 
     constructor(props) {
@@ -91,7 +93,6 @@ export default class PickingScreen extends Component {
 
     setNextItemOrder() {
         let orderItems = this.state.picking['items'];
-        console.log(orderItems);
         for (var i = 0; i < orderItems.length; i++) {
             if (orderItems[i].quantityPicked < orderItems[i].quantity) {
                 this.setState({
@@ -198,29 +199,61 @@ export default class PickingScreen extends Component {
             return (
                 <Container>
                     <Grid>
-                        <Row size={5} />
-                        <Row size={70}>
+                        <Row size={2} />
+                        <Row size={85}>
                             <Card style={styles.item}>
                                 <CardItem header>
-                                    <Text>{item.name} (ID {item.idProduct})</Text>
+                                    <Body>
+                                        <Text style={styles.boldText} >{item.name} (ID {item.idProduct})</Text>
+                                        <Text style={styles.boldText} >Quantité : x{item.quantity}</Text>
+                                    </Body>
                                 </CardItem>
-                                <CardItem>
-                                    <Text style={{ fontSize: 20 }}>Etage 2</Text>
-                                </CardItem>
-                                <CardItem>
-                                    <Text style={{ fontSize: 20 }}>Alley 3</Text>
-                                </CardItem>
-                                <CardItem>
-                                    <Text style={{ fontSize: 20 }}>Etagére 9</Text>
-                                </CardItem>
-                                <CardItem>
-                                    <Text style={{ fontSize: 20 }}>Block 3</Text>
-                                </CardItem>
+                                <List>
+                                    <ListItem>
+                                        <Grid>
+                                            <Col size={33} >
+                                                <Text>Allée</Text>
+                                            </Col>
+                                            <Col size={33} >
+                                                <Text style={[styles.boldText, styles.badgeText]} >{item.alley}</Text>
+                                            </Col>
+                                        </Grid>
+                                    </ListItem>
+                                    <ListItem>
+                                        <Grid>
+                                            <Col size={33} >
+                                                <Text>Etagère</Text>
+                                            </Col>
+                                            <Col size={33} >
+                                                <Text style={[styles.boldText, styles.badgeText]} >{item.shelf}</Text>
+                                            </Col>
+                                        </Grid>
+                                    </ListItem>
+                                    <ListItem>
+                                        <Grid>
+                                            <Col size={33} >
+                                                <Text>Niveau</Text>
+                                            </Col>
+                                            <Col size={33} >
+                                                <Text style={[styles.boldText, styles.badgeText]} >{item.level}</Text>
+                                            </Col>
+                                        </Grid>
+                                    </ListItem>
+                                    <ListItem>
+                                        <Grid>
+                                            <Col size={33} >
+                                                <Text>Bloc</Text>
+                                            </Col>
+                                            <Col size={33} >
+                                                <Text style={[styles.boldText, styles.badgeText]} >{item.block}</Text>
+                                            </Col>
+                                        </Grid>
+                                    </ListItem>
+                                </List>
                             </Card>
                         </Row>
-
-                        <Row size={5} />
-                        <Row size={20}>
+                        <Row size={2} />
+                        <Row size={15}>
                             <Button outline info style={styles.waitingButton} onPress={() => this.setState({ scanSuccess: true })}>
                                 <Text>En attente du scan du produit via NFC{this.state.dots}</Text>
                             </Button>
@@ -271,5 +304,17 @@ const styles = StyleSheet.create({
     },
     waitingButton: {
         flex: 1,
+    },
+    boldText: {
+        fontWeight: 'bold'
+    },
+    badgeText: {
+        textAlign: 'center',
+        borderColor: '#DADADA',
+        borderWidth: 1,
+        borderRadius: 100,
+        paddingLeft: 5,
+        paddingRight: 5,
+        fontSize: 20,
     },
 });

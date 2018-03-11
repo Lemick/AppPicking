@@ -1,0 +1,1 @@
+cd react-mobileapp && yarn start

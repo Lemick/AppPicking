@@ -14,6 +14,7 @@ import {
     Content,
     Body,
     Right,
+    H5,
 } from "native-base";
 
 export default class ListOrderItems extends Component {
@@ -27,9 +28,7 @@ export default class ListOrderItems extends Component {
         if (!this.props.orderItems) {
             return (
                 <Container style={styles.container}>
-                    <Content>
-                        <Text>Pas de picking en cours</Text>
-                    </Content>
+                        <Text style={styles.textEmpty}>Pas de picking en cours...</Text>
                 </Container>
             );
         }
@@ -42,7 +41,7 @@ export default class ListOrderItems extends Component {
                             this.props.orderItems.map(orderItem =>
                                 <ListItem key={orderItem.orderitemId}>
                                     <Body>
-                                        <Text>{orderItem.name}</Text>
+                                        <Text>{orderItem.idProduct} {orderItem.name}</Text>
                                         <Text note>Quantité : x{orderItem.quantity}</Text>
                                     </Body>
                                     <Right>
@@ -65,6 +64,10 @@ export default class ListOrderItems extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#fafafa',
-    }
+        backgroundColor: '#F4F5F7',
+    },
+    textEmpty: {
+        textAlign: 'center',
+        paddingTop: 40,
+    },
 });
