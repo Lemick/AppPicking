@@ -1,6 +1,6 @@
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight, Picker } from 'react-native';
 import t from 'tcomb-form-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 
@@ -8,7 +8,6 @@ import { resetNavigation } from '../NavigationUtils';
 import GLOBAL from '../GlobalConst';
 
 import {
-    Picker,
     Button,
     Content,
     Spinner,
@@ -78,7 +77,7 @@ export default class Login extends Component {
                     <Picker
                         selectedValue={this.state.userSelected == null ? 0 : this.state.userSelected.id}
                         onValueChange={(itemValue) => this.onCBUserChange(itemValue)}>
-                        <Picker.Item mode="dropdown" iosHeader="Sélectionner un utilisateur"
+                        <Picker.Item
                             label='Sélectionner un utilisateur...' value='0' />
                         {
                             this.state.users.map(user =>
@@ -107,6 +106,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
+        marginTop : 30,
         fontSize: 30,
         alignSelf: 'center',
         marginBottom: 60

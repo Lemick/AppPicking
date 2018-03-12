@@ -76,17 +76,20 @@ export default class ScanSuccess extends Component {
                     <View >
                         <Modal isVisible={this.state.modalAlert && this.state.alertSended}>
                             <View style={styles.modalContent}>
-                                <Text>Alerte envoyée</Text>
-                                <Button primary style={styles.modalButton} onPress={() => this.setState({ modalAlert: false })}>
-                                    <Text>OK</Text>
-                                </Button>
+                                <Text>Votre alerte a bien été envoyée</Text>
+                                <View style={styles.buttonModal}>
+                                    <Button primary style={styles.modalButton} onPress={() => this.setState({ modalAlert: false })}>
+                                        <Text>OK</Text>
+                                    </Button>
+                                </View>
                             </View>
                         </Modal>
                     </View>
                     <Col size={90}>
                         <Row size={5} />
-                        <Row size={10} >
-                            <H3 style={styles.baseMessage}>Produit scanné</H3>
+                        <Row size={10} style={styles.containerText}>
+                            <Icon name="md-checkmark" style={{ marginRight: 15, marginBottom: 35 }} />
+                            <H3 style={styles.baseMessage}>Produit correspondant</H3>
                         </Row>
                         <Row size={5} >
                             { /** Début d'implémentation du picking partiel (si il ne reste que 2 produits en stocks et que la commande en demande 3, permet d'enregistrer le nombre manquant)
@@ -100,7 +103,11 @@ export default class ScanSuccess extends Component {
                             </Form>
                             **/}
                         </Row>
-                        <Row size={20} />
+                        <Row size={20} style={styles.containerText} >
+                            <Text style={styles.baseMessage}>
+                                Vous pouvez passer au produit suivant ou émettre une alerte de stock pour ce produit
+                            </Text>
+                        </Row>
                         <Row size={20} >
                             <Button {...disabledNext} style={styles.sizedButton} onPress={() => this.saveQuantityPickedInDB()}>
                                 <Icon name="md-return-right" />
@@ -126,6 +133,7 @@ export default class ScanSuccess extends Component {
 const styles = StyleSheet.create({
     baseMessage: {
         justifyContent: 'center',
+        textAlign: 'center',
     },
     sizedButton: {
         flex: 1,
@@ -143,13 +151,12 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         borderColor: 'rgba(0, 0, 0, 0.1)',
     },
-    modalButton: {
-        backgroundColor: 'lightblue',
-        padding: 12,
-        margin: 16,
+    buttonModal: {
+        backgroundColor: 'white',
         justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 4,
-        borderColor: 'rgba(0, 0, 0, 0.1)',
+        paddingTop: 20,
+    },
+    containerText: {
+        justifyContent: 'center'
     },
 });

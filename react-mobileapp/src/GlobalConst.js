@@ -1,5 +1,5 @@
 const Constants = {
-    API_URL: 'http://192.168.1.59:3001',
+    API_URL: 'http://192.168.43.50:3001',
     TabEnum : {
         Picking: '1',
         Listing: '2',

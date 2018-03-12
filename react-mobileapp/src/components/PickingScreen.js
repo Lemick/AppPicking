@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, TouchableHighlight, } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Col, Row, Grid } from "react-native-easy-grid";
+import Modal from "react-native-modal";
 
 import { resetNavigation } from '../NavigationUtils';
 import Constants from '../GlobalConst';
@@ -45,6 +46,7 @@ export default class PickingScreen extends Component {
             currentOrderItem: null,
             activeTab: Constants.TabEnum.Picking,
             scanSuccess: false,
+            modalPickingTerminated: false,
             dots: '',
         }
 
@@ -97,10 +99,18 @@ export default class PickingScreen extends Component {
             if (orderItems[i].quantityPicked < orderItems[i].quantity) {
                 this.setState({
                     currentOrderItem: orderItems[i],
-                    scanSuccess: false
+                    scanSuccess: null
                 });
+                return;
             }
         }
+
+        // Plus de produits à picker, picking terminé 
+        this.setState({
+            currentOrderItem: null,
+            scanSuccess: null,
+            modalPickingTerminated: true
+        });
     }
 
     setPickingLoading(value) {
@@ -127,7 +137,7 @@ export default class PickingScreen extends Component {
     }
 
     showListing() {
-        this.props.navigation.setParams({ title: 'Liste de sous-commandes' })
+        this.props.navigation.setParams({ title: 'Liste des produits' })
         this.setState({ activeTab: Constants.TabEnum.Listing });
     }
 
@@ -198,6 +208,20 @@ export default class PickingScreen extends Component {
             const item = this.state.currentOrderItem;
             return (
                 <Container>
+                    <View >
+                        <Modal isVisible={this.state.scanSuccess == false}>
+                            <View style={styles.modalContent}>
+                                <Text>
+                                    Vous avez scanné le mauvais produit, veuillez verifier les informations.
+                                </Text>
+                                <View style={styles.buttonModal}>
+                                    <Button primary block style={styles.modalButton} onPress={() => this.setState({ scanSuccess: null })}>
+                                        <Text>OK</Text>
+                                    </Button>
+                                </View>
+                            </View>
+                        </Modal>
+                    </View>
                     <Grid>
                         <Row size={2} />
                         <Row size={85}>
@@ -254,7 +278,11 @@ export default class PickingScreen extends Component {
                         </Row>
                         <Row size={2} />
                         <Row size={15}>
-                            <Button outline info style={styles.waitingButton} onPress={() => this.setState({ scanSuccess: true })}>
+                            {// On simule le scan NFC via un boutton, on reste appuyé pour simuler un echec de scan, un simple appui pour simuler un succés 
+                            }
+                            <Button outline info style={styles.waitingButton}
+                                onLongPress={() => this.setState({ scanSuccess: false })}
+                                onPress={() => this.setState({ scanSuccess: true })}>
                                 <Text>En attente du scan du produit via NFC{this.state.dots}</Text>
                             </Button>
                         </Row>
@@ -271,6 +299,21 @@ export default class PickingScreen extends Component {
         */
         return (
             <Container>
+                <View >
+                    <Modal isVisible={this.state.modalPickingTerminated}>
+                        <View style={styles.modalContent}>
+                            <Text>
+                                Votre picking est achevé, vous pouvez rejoindre la sortie la plus proche dans le respect de la
+                                signalétique mise en vigueur
+                            </Text>
+                            <View style={styles.buttonModal}>
+                                <Button primary block style={styles.modalButton} onPress={() => this.setState({ modalPickingTerminated: false })}>
+                                    <Text>OK</Text>
+                                </Button>
+                            </View>
+                        </View>
+                    </Modal>
+                </View>
                 <Body>
                     <Grid>
                         <Row size={20} />
@@ -284,7 +327,6 @@ export default class PickingScreen extends Component {
                             </Button>
                         </Row>
                     </Grid>
-
                 </Body>
                 <_Footer />
             </Container>
@@ -311,10 +353,19 @@ const styles = StyleSheet.create({
     badgeText: {
         textAlign: 'center',
         borderColor: '#DADADA',
-        borderWidth: 1,
-        borderRadius: 100,
-        paddingLeft: 5,
-        paddingRight: 5,
         fontSize: 20,
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 22,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 4,
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    buttonModal: {
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        paddingTop: 20,
     },
 });
