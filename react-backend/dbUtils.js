@@ -91,6 +91,20 @@ module.exports = {
         }).on('error', function (err) {
             console.log("[mysql error]", err);
         });
-    }
+    },
+
+    insertAlert : function (idProduct, idUserPicker, _callback) {
+        sqlinsertAlert = 'INSERT INTO `alert`(`idProduct`, `idUserPicker`) VALUES ( ?, ?)';
+        db.query(sqlinsertAlert, [idProduct, idUserPicker], function (err, alert) {
+            if (alert.affectedRows > 0) {
+                _callback(alert.insertId);
+            } else {
+                console.log("[mysql error]", err);
+                _callback(null);
+            }
+        }).on('error', function (err) {
+            console.log("[mysql error]", err);
+        });
+    },
 
 };

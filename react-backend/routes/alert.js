@@ -3,7 +3,7 @@ var router = express.Router();
 var db = require('../db');
 var bodyParser = require('body-parser')
 var async = require('async');
-
+var dbUtils = require('../dbUtils');
 
 router.get('/', function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
@@ -37,5 +37,23 @@ router.get('/', function (req, res, next) {
     }).on('error', (err) => console.log("[mysql error]", err));
 });
 
+/**
+ * Insertion d'un nouvelle alerte
+ */
+router.post('/new', function (req, res, next) {
+    res.setHeader('Content-Type', 'text/plain');
+
+    if (req.body.idProduct && req.body.idUserPicker) {
+        let result = dbUtils.insertAlert(req.body.idProduct, req.body.idUserPicker, function(idNewAlert) {
+            if(idNewAlert) {
+                res.send(idNewAlert.toString());
+            } else {
+                res.send("");
+            }
+        });
+    } else {
+        res.sendStatus(400);
+    }
+});
 
 module.exports = router;

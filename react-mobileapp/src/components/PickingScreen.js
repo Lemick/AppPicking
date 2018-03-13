@@ -198,7 +198,7 @@ export default class PickingScreen extends Component {
         if (this.state.scanSuccess == true) {
             return (
                 <Container>
-                    <ScanSuccess item={this.state.currentOrderItem} goToNextArticle={this.setNextItemOrder} />
+                    <ScanSuccess user={this.state.user} item={this.state.currentOrderItem} goToNextArticle={this.setNextItemOrder} />
                     <_Footer />
                 </Container >
             );

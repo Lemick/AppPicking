@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Col, Row, Grid } from "react-native-easy-grid";
 import Modal from "react-native-modal";
 
-import GLOBAL from '../GlobalConst';
+import Constants from '../GlobalConst';
 
 import {
     Container,
@@ -51,13 +51,37 @@ export default class ScanSuccess extends Component {
     }
 
     sendAlert() {
-        // Ecrire en DB L'alerte
-        if (true) {
-            this.setState({
-                modalAlert: true,
-                alertSended: true
-            });
-        }
+        // Demande à l'API de créer l'alerte
+        console.log(this.props.item);
+        let bodyParams = new Object();
+        bodyParams.idProduct = this.props.item.idProduct;
+        bodyParams.idUserPicker = this.props.user.id;
+
+        console.log(JSON.stringify(bodyParams));
+        fetch(Constants.API_URL + '/alert/new', {
+            headers: {
+                'Accept': 'text/plain',
+                'Content-Type': 'application/json'
+            },
+            method: 'post',
+            body: JSON.stringify(bodyParams)
+        })
+            .then((res) => res.text())
+            .then(idNewAlert => {
+                if (parseInt(idNewAlert)) {
+                    this.setState({
+                        modalAlert: true,
+                        alertSended: true
+                    });
+                } else {
+                    this.setState({
+                        modalAlert: true,
+                        alertSended: false
+                    });
+                }
+            }).catch((error) => console.log(error));
+
+
     }
 
     saveQuantityPickedInDB() {
@@ -74,9 +98,9 @@ export default class ScanSuccess extends Component {
                 <Grid>
                     <Col size={5} />
                     <View >
-                        <Modal isVisible={this.state.modalAlert && this.state.alertSended}>
+                        <Modal isVisible={this.state.modalAlert}>
                             <View style={styles.modalContent}>
-                                <Text>Votre alerte a bien été envoyée</Text>
+                                <Text>{this.state.alertSended ? 'Votre alerte a bien été envoyée' : 'Erreur dans l\'envoi de l\'alerte, veuillez réessayer plus tard'}</Text>
                                 <View style={styles.buttonModal}>
                                     <Button primary style={styles.modalButton} onPress={() => this.setState({ modalAlert: false })}>
                                         <Text>OK</Text>
