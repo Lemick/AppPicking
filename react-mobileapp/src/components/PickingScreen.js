@@ -107,6 +107,7 @@ export default class PickingScreen extends Component {
 
         // Plus de produits à picker, picking terminé 
         this.setState({
+            picking : null,
             currentOrderItem: null,
             scanSuccess: null,
             modalPickingTerminated: true
@@ -139,6 +140,10 @@ export default class PickingScreen extends Component {
     showListing() {
         this.props.navigation.setParams({ title: 'Liste des produits' })
         this.setState({ activeTab: Constants.TabEnum.Listing });
+    }
+
+    generateNewPicking() {
+        
     }
 
     /****************
@@ -322,7 +327,7 @@ export default class PickingScreen extends Component {
                         </Row>
                         <Row size={20} />
                         <Row size={45} >
-                            <Button primary style={styles.sizedButton}>
+                            <Button primary style={styles.sizedButton} onPress={() => this.generateNewPicking()}>
                                 <Text>Démarrer un picking</Text>
                             </Button>
                         </Row>

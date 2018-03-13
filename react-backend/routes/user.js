@@ -34,7 +34,7 @@ router.get('/:id/picking', function (req, res, next) {
 
   // Fetch picking
   db.query('SELECT * FROM picking WHERE idUserPicker=?', [id], function (err, row) {
-    if(row) {
+    if (row) {
       res.send(row[0]);
     } else {
       res.send("");
@@ -63,6 +63,7 @@ router.get('/:id/generatepicking', function (req, res, next) {
   // Fetch user
   db.query('SELECT * FROM userPicker WHERE id=?', [id], function (err, row) {
     var user = row[0];
+    consle.log(user);
     /**
      * TODO : On pourrait ici mettre un LIMIT pour ne pas avoir a parcourir l'ensemble des commandes pour calculer le groupements de comande
      */
@@ -74,12 +75,13 @@ router.get('/:id/generatepicking', function (req, res, next) {
       for (var order in orders) {
         if (order.weight + currentWeight < maxWeight) {
           assignedOrders.push(orders.id);
-          currentWeight = order.weight;
+          currentWeight += order.weight;
         }
-        dbUtils.insertPicking(idUser, assignedOrders, function (newPickingId) {
-          res.send(newPickingId.toString());
-        });
       }
+      dbUtils.insertPicking(idUser, assignedOrders, function (newPickingId) {
+        res.send(newPickingId.toString());
+        return;
+      });
     });
   }).on('error', (err) => console.log("[mysql error]", err));
   res.send("");
