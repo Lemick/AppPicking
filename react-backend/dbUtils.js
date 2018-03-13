@@ -11,10 +11,20 @@ const TABLE_ORDERITEM = 'orderitem';
 module.exports = {
     getOrders: function (removeProcessed, orderByDate, _callback) {
 
-        var removeProcessedClause = ''
-        if (removeProcessed)
-            var removeProcessedClause = ' WHERE isProcessed=0 ';
-
+        /**
+         * On modifie la requête SQL si l'on ne veut pas des commandes déja totalement traitées
+         * (i.e : dont tout les produits on été 'pické' dans la quantité demandé)
+         * Les commandes traitées 'partiellement' car le stock n'était pas suffisant peuvent donc être gérées et réaffecté à un picker.
+         */
+        var removeProcessedWhereClause = ''
+        var removeProcessedJoinClause = ''
+        var removeProcessedGroupClause = ''
+        if (removeProcessed) {
+            removeProcessedJoinClause = ' LEFT JOIN orderitem ON order.id = orderitem.idOrder ';
+            removeProcessedWhereClause = ' WHERE quantity != quantityPicked ';
+            removeProcessedGroupClause = ' GROUP BY order.id '
+        }
+            
         var orderByDateClause = ''
         if (orderByDate == 'asc')
             orderByDateClause = ' ORDER BY date ASC ';
@@ -22,7 +32,9 @@ module.exports = {
             orderByDateClause = ' ORDER BY date DESC ';
 
         // Fetch Orders
-        db.query('SELECT * FROM ' + TABLE_ORDER + removeProcessedClause + orderByDateClause, function (err, orders) {
+        db.query('SELECT order.id, order.date FROM ' + TABLE_ORDER + removeProcessedJoinClause + removeProcessedWhereClause + removeProcessedGroupClause + orderByDateClause, 
+        function (err, orders) {
+
             async.forEachOf(orders, function (order, i, callbackOrder) {
                 // Fetch OrderItems
                 db.query('SELECT * FROM orderitem WHERE idorder=?', order['id'], function (err, orderItems) {
@@ -102,6 +114,22 @@ module.exports = {
                 console.log("[mysql error]", err);
                 _callback(null);
             }
+        }).on('error', function (err) {
+            console.log("[mysql error]", err);
+        });
+    },
+
+    /**
+     * Renvoie 1 si la commande est déja liée à un picking, sinon 0
+     * TODO : on pourra ici verifier plus précisement si la commande est lié à un picking Terminé, 
+     * dans quel cas on pourra potentiellement le réassigner (cas d'un commande incompléte)
+     */
+    orderAlreadyAssignedToPicking(idOrder, _callback) {
+        sqlQuery = 'SELECT CASE WHEN EXISTS ( SELECT * FROM `orderpick` WHERE orderpick.idOrder = ?) THEN 1 ELSE 0 END'
+        db.query(sqlQuery, [idOrder], function (err, result) {
+            console.log('restult select case');
+            console.log(result[0]);
+            //_callback(result == 1);
         }).on('error', function (err) {
             console.log("[mysql error]", err);
         });

@@ -5,6 +5,15 @@ var dbUtils = require('../dbUtils');
 var async = require('async');
 
 
+router.get('/baba', function (req, res, next) {
+  dbUtils.orderAlreadyAssignedToPicking(4, function (res) {
+
+
+  });
+
+});
+
+
 router.get('/test', function (req, res, next) {
   dbUtils.insertPicking(1, [10, 11, 12], function (idPicking) {
 
@@ -50,9 +59,9 @@ router.get('/:id/picking', function (req, res, next) {
 router.get('/:id/generatepicking', function (req, res, next) {
 
   // Multiplicateur permettant de calculer linéairement le poids maximal alloué à un utilisateur
-  const HEALTH_MULTIPLICATOR = 0.5;
+  const HEALTH_MULTIPLICATOR = 0.8;
 
-  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Type', 'plain/text');
   var id = req.params.id;
 
   if (id == null) {
@@ -63,7 +72,7 @@ router.get('/:id/generatepicking', function (req, res, next) {
   // Fetch user
   db.query('SELECT * FROM userPicker WHERE id=?', [id], function (err, row) {
     var user = row[0];
-    consle.log(user);
+    console.log(user);
     /**
      * TODO : On pourrait ici mettre un LIMIT pour ne pas avoir a parcourir l'ensemble des commandes pour calculer le groupements de comande
      */
@@ -72,13 +81,19 @@ router.get('/:id/generatepicking', function (req, res, next) {
       const maxWeight = user.health * HEALTH_MULTIPLICATOR;
       var assignedOrders = [];
       var currentWeight = 0;
-      for (var order in orders) {
-        if (order.weight + currentWeight < maxWeight) {
-          assignedOrders.push(orders.id);
-          currentWeight += order.weight;
+
+      for (var i = 0; i < orders.length; i++) {
+        let order = orders[i];
+        let isUnderMaxWeight = orderItemsUnderThreshold(order['orderItem'], maxWeight - currentWeight);
+        if (isUnderMaxWeight != false) {
+          assignedOrders.push(order.id);
+          currentWeight += isUnderMaxWeight;
         }
+        console.log('assignedOrders');
+        console.log(assignedOrders);
       }
-      dbUtils.insertPicking(idUser, assignedOrders, function (newPickingId) {
+
+      dbUtils.insertPicking(user.id, assignedOrders, function (newPickingId) {
         res.send(newPickingId.toString());
         return;
       });
@@ -87,6 +102,23 @@ router.get('/:id/generatepicking', function (req, res, next) {
   res.send("");
 });
 
+/**
+ * UTILS
+ */
+
+// Retourne le poids de la commande si en dessous du seuil, sinon false
+function orderItemsUnderThreshold(orderItems, threshold) {
+  var curr = 0;
+  for (var i = 0; i < orderItems.length; i++) {
+    let orderItem = orderItems[i];
+    curr += orderItem.product.weight;
+  }
+
+  if (curr <= threshold)
+    return curr;
+  else
+    return false;
+}
 
 
 
