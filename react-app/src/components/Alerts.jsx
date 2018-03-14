@@ -25,7 +25,7 @@ class Alerts extends React.Component {
     }
 
     componentDidMount() {
-        fetch('/alert/')
+        fetch('/alert/ishandled')
             .then(res => res.json())
             .then((alerts) => this.setState({
                 alerts: alerts,
@@ -54,7 +54,7 @@ class Alerts extends React.Component {
     }
 
     showWeight(cell, row) {
-        return cell.weight;
+        return cell.weight + 'kg';
     }
 
     showStock(cell, row) {
@@ -79,9 +79,23 @@ class Alerts extends React.Component {
         }
     }
 
+    buttonFormatted(cell, row) {
+        return (
+            <a className="btn btn-primary" href="#" onClick={this.removealert(cell)}>
+                <i className="fa fa-remove" aria-hidden="true"></i>
+            </a>);
+    }
+
+    removealert(id) {
+        console.log('clicked');
+        fetch('/alert/' + id + '/handled');
+    }
+
+
+
     render() {
         return (
-            <div> 
+            <div>
                 <div className="my-3">
                     <span className="text-center">
                         <h3 className="text-center">Liste des alertes</h3>
@@ -99,16 +113,17 @@ class Alerts extends React.Component {
 
                 <div className="list-group">
                     <BootstrapTable data={this.state.alertsFiltered} version='4'>
-                        <TableHeaderColumn isKey dataField='id' dataSort>Référence</TableHeaderColumn>
+                        <TableHeaderColumn width='6%' isKey dataField='id' dataSort>Référence</TableHeaderColumn>
                         <TableHeaderColumn dataField='creationTime' dataFormat={this.dateFormat} dataSort>Date de création</TableHeaderColumn>
                         <TableHeaderColumn dataField='modificationTime' dataFormat={this.dateFormat}>Date de derniére modification</TableHeaderColumn>
                         <TableHeaderColumn dataField='product' dataFormat={this.showProductDescription}>Produit</TableHeaderColumn>
-                        <TableHeaderColumn dataField='product' dataFormat={this.showStock}>Stock enregistré</TableHeaderColumn>
-                        <TableHeaderColumn dataField='product' dataFormat={this.showWeight}>Poids</TableHeaderColumn>
+                        <TableHeaderColumn width='6%' dataField='product' dataFormat={this.showStock}>Stock</TableHeaderColumn>
+                        <TableHeaderColumn width='6%' dataField='product' dataFormat={this.showWeight}>Poids</TableHeaderColumn>
                         <TableHeaderColumn dataField='userPicker' dataFormat={this.showOriginUser} dataSort sortFunc={this.sortFunc}>Origine de l'alerte</TableHeaderColumn>
+                        <TableHeaderColumn width='5%' dataField='edit' dataFormat={this.buttonFormatted.bind(this)} >Action</TableHeaderColumn>
                     </BootstrapTable>
                 </div>
-            </div>
+            </div >
         )
     }
 }
