@@ -57,6 +57,24 @@ router.get('/:id/orderitems', function (req, res, next) {
 /**
  * Sert à modifier la status d'un picking
  */
+router.post('/setQuantityPicked', function (req, res, next) {
+    res.setHeader('Content-Type', 'text/plain');
+    if (req.body.idOrderItem && req.body.quantityPicked) {
+        dbUtils.updateQuantityPicked(req.body.idOrderItem, req.body.quantityPicked, function(queryResult) {
+            if(queryResult) {
+                res.send("true");
+            } else {
+                res.send("");
+            }
+        });
+    } else {
+        res.sendStatus(400);
+    }
+});
+
+/**
+ * Sert à modifier la status d'un picking
+ */
 router.post('/terminate', function (req, res, next) {
     res.setHeader('Content-Type', 'text/plain');
     if (req.body.id) {

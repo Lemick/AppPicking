@@ -5,9 +5,7 @@ var async = require('async');
 const TABLE_ORDER = '`order`';
 const TABLE_ORDERITEM = 'orderitem';
 
-/************************
- * FETCH METHODS
- ************************/
+
 module.exports = {
     getOrders: function (removeProcessed, orderByDate, _callback) {
 
@@ -21,7 +19,7 @@ module.exports = {
         var removeProcessedGroupClause = ''
         if (removeProcessed) {
             removeProcessedJoinClause = ' LEFT JOIN orderitem ON order.id = orderitem.idOrder ';
-            removeProcessedWhereClause = ' WHERE quantity != quantityPicked ';
+            removeProcessedWhereClause = ' WHERE quantity != quantityPicked AND order.id NOT IN (SELECT orderpick.idOrder FROM orderpick) ';
             removeProcessedGroupClause = ' GROUP BY order.id '
         }
             
@@ -34,7 +32,7 @@ module.exports = {
         // Fetch Orders
         db.query('SELECT order.id, order.date FROM ' + TABLE_ORDER + removeProcessedJoinClause + removeProcessedWhereClause + removeProcessedGroupClause + orderByDateClause, 
         function (err, orders) {
-
+            console.log('SELECT order.id, order.date FROM ' + TABLE_ORDER + removeProcessedJoinClause + removeProcessedWhereClause + removeProcessedGroupClause + orderByDateClause);
             async.forEachOf(orders, function (order, i, callbackOrder) {
                 // Fetch OrderItems
                 db.query('SELECT * FROM orderitem WHERE idorder=?', order['id'], function (err, orderItems) {
@@ -128,7 +126,7 @@ module.exports = {
     /**
      * Renvoie 1 si la commande est déja liée à un picking, sinon 0
      * TODO : on pourra ici verifier plus précisement si la commande est lié à un picking Terminé, 
-     * dans quel cas on pourra potentiellement le réassigner (cas d'un commande incompléte)
+     * dans quel cas on pourra potentiellement le réassigner (cas d'une commande incompléte)
      */
     orderAlreadyAssignedToPicking(idOrder, _callback) {
         let sqlQuery = 'CASE WHEN EXISTS ( SELECT * FROM `orderpick` WHERE orderpick.idOrder = ' + idOrder + ') THEN 1 ELSE 0 END' // On à pas accés aux ALIAS dans cette requête
@@ -157,5 +155,18 @@ module.exports = {
         });
     },
 
+    updateQuantityPicked : function (idOrderItem, quantityPicked, _callback) {
+        sqlupdate = 'UPDATE orderitem SET quantityPicked=? WHERE id=?';
+        db.query(sqlupdate, [quantityPicked, idOrderItem], function (err, res) {
+            if (res.affectedRows > 0) {
+                _callback(true);
+            } else {
+                console.log("[mysql error]", err);
+                _callback(null);
+            }
+        }).on('error', function (err) {
+            console.log("[mysql error]", err);
+        });
+    },
 
 };

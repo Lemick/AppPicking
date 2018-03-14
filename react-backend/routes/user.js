@@ -3,26 +3,18 @@ var router = express.Router();
 var db = require('../db');
 var dbUtils = require('../dbUtils');
 var async = require('async');
-var distance = require('euclidean-distance')
 
 // Multiplicateur permettant de calculer linéairement le poids maximal alloué à un utilisateur
 const HEALTH_MULTIPLICATOR = 0.9;
 
 
 router.get('/coord', function (req, res, next) {
-  var c1 = new Object();
-  c1.x = 1;
-  c1.y = 2;
+  dbUtils.getOrders(true, 'asc', function (orders) {
 
-  var c2 = new Object();
-  c2.x = 2;
-  c2.y = 2;
-
-
-  let test = euclidianDistance(c1, c2);
-
-  console.log(getBaryCenter([{ "x": 1, "y": 0 }, { "x": 5, "y": 0 }, { "x": 10, "y": 0 }]));
-  res.send("oui");
+    var orderBase = orders[0];
+    orders.splice(0, 1);
+    res.send(findNearestOrder(null, orders).toString());
+  });
 });
 
 
@@ -93,32 +85,36 @@ router.get('/:id/generatepicking', function (req, res, next) {
       var assignedOrders = [];
       var currentWeight = 0;
 
-      async.forEachOf(orders, function (order, i, callback) {
-        console.log('je boucle sur l id order = ' + order.id)
-        dbUtils.orderAlreadyAssignedToPicking(order.id, function (alreadyAssigned) {
-          let isUnderMaxWeight = orderItemsUnderThreshold(order['orderItem'], maxWeight - currentWeight);
-          if (alreadyAssigned == false && isUnderMaxWeight != false) {
-            assignedOrders.push(order.id);
-            currentWeight += isUnderMaxWeight;
-          }
-          callback(null);
-        });
-      }, function (err) {
-        if (err) {
-          console.err(err);
+      if (orders.length == 0) {
+        res.send("");
+        return;
+      }
 
+
+      var lastOrderChoosen = null;
+      while (currentWeight < maxWeight) {
+        let indexNearestOrder = findNearestOrderUnderThreshold(lastOrderChoosen, orders, maxWeight - currentWeight);
+        if (indexNearestOrder == null) {
+          break; // Plus de commandes à parcourir
         } else {
-          console.log('assignedOrders');
-          console.log(assignedOrders);
-          if (assignedOrders.length > 0) {
-            dbUtils.insertPicking(user.id, assignedOrders, function (newPickingId) {
-              res.send(newPickingId.toString());
-            });
-          } else {
-            res.send("");
-          }
+          lastOrderChoosen = orders[indexNearestOrder];
+          currentWeight += orderItemsWeight(lastOrderChoosen['orderItem']);
+          assignedOrders.push(lastOrderChoosen.id);
+          orders.splice(indexNearestOrder, 1);
         }
-      });
+      }
+
+      console.log('assignedOrders');
+      console.log(assignedOrders);
+      if (assignedOrders.length > 0) {
+        dbUtils.insertPicking(user.id, assignedOrders, function (newPickingId) {
+          res.send(newPickingId.toString());
+        });
+      } else {
+        res.send("");
+        return;
+      }
+
     });
   }).on('error', (err) => console.log("[mysql error]", err));
 });
@@ -128,20 +124,88 @@ router.get('/:id/generatepicking', function (req, res, next) {
  * UTILS
  */
 
-// Retourne le poids de la commande si en dessous du seuil, sinon false
-function orderItemsUnderThreshold(orderItems, threshold) {
-  var curr = 0;
-  for (var i = 0; i < orderItems.length; i++) {
-    let orderItem = orderItems[i];
-    curr += orderItem.product.weight;
+
+/**
+ * Retourne l'index de la commande la plus proche de la commande de base et restant sous le seuil de poids
+ */
+function findNearestOrderUnderThreshold(baseOrder, orders, threshold) {
+  var indResult = -1;
+  copyOrders = orders.slice(0);
+
+  while (copyOrders.length > 0) {
+    let indNearest = findNearestOrder(baseOrder, copyOrders);
+    let underThreshold = orderItemsUnderThreshold(copyOrders[indNearest]['orderItem'], threshold);
+
+    if (underThreshold != false) { // On à trouvé une commande en dessous du seuil de poids
+      let pos = orders.map(function (e) { return e.id; }).indexOf(copyOrders[indNearest].id);
+      return pos;
+
+    } else { // La commande la plus proche est trop lourde, on la retire de la liste
+      copyOrders.splice(indResult, 1);
+    }
   }
-  console.log('curr = ' + curr + ' and treshold = ' + threshold);
-  if (curr <= threshold)
-    return curr;
+  return null;
+}
+
+
+/**
+ * Retourne la commande la plus proche parmis une liste de commandes
+ * (Celle ayant le barycentre le plus proche de notre commande réference)
+ * Si baseOrder = null, alors on chercher la commande la plus proche de l'entrée
+ */
+function findNearestOrder(baseOrder, orders) {
+  if (orders.length == 0)
+    return -1;
+
+  let baseBcenter = getCoordEntryPoint();
+  console.log(baseBcenter);
+  if (baseOrder != null)
+    baseBcenter = getBaryCenterOrder(baseOrder);
+  let distance = Number.MAX_SAFE_INTEGER;
+  let resIndex = -1;
+  for (var i = 0; i < orders.length; i++) {
+    console.log(distance);
+    let distanceElem = euclidianDistance(baseBcenter, getBaryCenterOrder(orders[i]));
+    if (distanceElem < distance) {
+      distance = distanceElem;
+      resIndex = i;
+    }
+  }
+
+  return resIndex;
+}
+
+// Retourne le poids de la commande si elle est en dessous du seuil, sinon false
+function orderItemsUnderThreshold(orderItems, threshold) {
+  var weightTotal = orderItemsWeight(orderItems);
+  if (weightTotal <= threshold)
+    return weightTotal;
   else
     return false;
 }
 
+function orderItemsWeight(orderItems) {
+  var weightTotal = 0;
+  for (var i = 0; i < orderItems.length; i++) {
+    let orderItem = orderItems[i];
+    weightTotal += orderItem.product.weight;
+  }
+  return weightTotal;
+}
+
+function getBaryCenterOrder(order) {
+  var coordsProducts = [];
+  for (var i = 0; i < order['orderItem'].length; i++) {
+    let product = order['orderItem'][i].product;
+    coordsProducts.push(getProductCoord(product));
+  }
+  return getBaryCenter(coordsProducts);
+}
+
+/**
+ * Retourne le barycentre parmis un ensemble de coordonnés
+ * @param {Ensemble de coordonnées à deux dimensions} setOfCoords 
+ */
 function getBaryCenter(setOfCoords) {
   if (setOfCoords.length == 0) {
     return null;
@@ -160,16 +224,28 @@ function getBaryCenter(setOfCoords) {
   return result;
 }
 
-
+/**
+ * Retourne les coordonnées (2D) liées à un produit
+ */
 function getProductCoord(product) {
   var coord = new Object();
   coord.x = product.alley;
   coord.y = product.shelf;
+  return coord;
 }
 
+/**
+ * Retourne la distance euclidienne (2D)
+ */
 function euclidianDistance(coord1, coord2) {
   return Math.sqrt((Math.pow(coord1.x - coord2.x, 2)) + (Math.pow(coord1.y - coord2.y, 2)));
 }
 
+function getCoordEntryPoint() {
+  var coord = new Object();
+  coord.x = 0;
+  coord.y = 0;
+  return coord;
+}
 
 module.exports = router;

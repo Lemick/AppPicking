@@ -85,9 +85,30 @@ export default class ScanSuccess extends Component {
     }
 
     saveQuantityPickedInDB() {
-        // Ecrire en DB la nouvelle quantité
         this.props.item.quantityPicked = this.props.item.quantity;
-        this.props.goToNextArticle();
+
+        // Ecrire en DB la nouvelle quantité
+        let bodyParams = new Object();
+        bodyParams.idOrderItem = this.props.item.orderitemId;
+        bodyParams.quantityPicked = this.props.item.quantity;
+        fetch(Constants.API_URL + '/picking/setQuantityPicked', {
+            headers: {
+                'Accept': 'text/plain',
+                'Content-Type': 'application/json'
+            },
+            method: 'post',
+            body: JSON.stringify(bodyParams)
+        })
+            .then((res) => res.text())
+            .then(responseText => {
+                console.log('RESPONSE');
+                console.log(this.props.item);
+                if (responseText) {
+                    this.props.goToNextArticle();
+                } else {
+                    console.log("ERROR: la quantité orderitem n'a pas pu être mise a jour en BDD")
+                }
+            }).catch((error) => console.log(error));
     }
 
     render() {
