@@ -59,7 +59,6 @@ export default class Login extends Component {
     }
 
     render() {
-
         if (this.state.loading) {
             return (
                 <Container>

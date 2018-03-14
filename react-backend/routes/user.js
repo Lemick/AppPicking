@@ -3,17 +3,26 @@ var router = express.Router();
 var db = require('../db');
 var dbUtils = require('../dbUtils');
 var async = require('async');
+var distance = require('euclidean-distance')
 
 // Multiplicateur permettant de calculer linéairement le poids maximal alloué à un utilisateur
 const HEALTH_MULTIPLICATOR = 0.9;
 
 
-router.get('/baba', function (req, res, next) {
-  dbUtils.orderAlreadyAssignedToPicking(5, function (res) {
+router.get('/coord', function (req, res, next) {
+  var c1 = new Object();
+  c1.x = 1;
+  c1.y = 2;
+
+  var c2 = new Object();
+  c2.x = 2;
+  c2.y = 2;
 
 
-  });
+  let test = euclidianDistance(c1, c2);
 
+  console.log(getBaryCenter([{ "x": 1, "y": 0 }, { "x": 5, "y": 0 }, { "x": 10, "y": 0 }]));
+  res.send("oui");
 });
 
 
@@ -133,6 +142,34 @@ function orderItemsUnderThreshold(orderItems, threshold) {
     return false;
 }
 
+function getBaryCenter(setOfCoords) {
+  if (setOfCoords.length == 0) {
+    return null;
+  }
+  var result = new Object();
+  result.x = 0;
+  result.y = 0;
+  for (var i = 0; i < setOfCoords.length; i++) {
+    let coord = setOfCoords[i];
+    result.x += coord.x;
+    result.y += coord.y;
+  }
+  result.x = result.x / setOfCoords.length;
+  result.y = result.y / setOfCoords.length;
+
+  return result;
+}
+
+
+function getProductCoord(product) {
+  var coord = new Object();
+  coord.x = product.alley;
+  coord.y = product.shelf;
+}
+
+function euclidianDistance(coord1, coord2) {
+  return Math.sqrt((Math.pow(coord1.x - coord2.x, 2)) + (Math.pow(coord1.y - coord2.y, 2)));
+}
 
 
 module.exports = router;

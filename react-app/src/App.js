@@ -54,7 +54,6 @@ class App extends React.Component {
           </div>
         </nav>
 
-
         {/* Route components are rendered if the path prop matches the current URL */}
 
         <Switch>
