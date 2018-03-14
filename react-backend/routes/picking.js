@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var db = require('../db');
 var bodyParser = require('body-parser')
+var dbUtils = require('../dbUtils');
+
 
 router.get('/', function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
@@ -50,6 +52,24 @@ router.get('/:id/orderitems', function (req, res, next) {
     }).on('error', function (err) {
         console.log("[mysql error]", err);
     });
+});
+
+/**
+ * Sert à modifier la status d'un picking
+ */
+router.post('/terminate', function (req, res, next) {
+    res.setHeader('Content-Type', 'text/plain');
+    if (req.body.id) {
+        let result = dbUtils.updatePickingStatus(req.body.id, function(idUpdatedPicking) {
+            if(idUpdatedPicking) {
+                res.send(idUpdatedPicking.toString());
+            } else {
+                res.send("");
+            }
+        });
+    } else {
+        res.sendStatus(400);
+    }
 });
 
 

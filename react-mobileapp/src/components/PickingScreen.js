@@ -47,6 +47,7 @@ export default class PickingScreen extends Component {
             activeTab: Constants.TabEnum.Picking,
             scanSuccess: false,
             modalPickingTerminated: false,
+            modalPickingGenerationError: false,
             dots: '',
         }
 
@@ -84,10 +85,6 @@ export default class PickingScreen extends Component {
             }).catch((error) => console.log(error));
     }
 
-    componentDidMount() {
-
-    }
-
     componentWillUnmount() {
         if (this.timerDots)
             clearInterval(this.timerDots);
@@ -105,13 +102,33 @@ export default class PickingScreen extends Component {
             }
         }
 
-        // Plus de produits à picker, picking terminé 
-        this.setState({
-            picking : null,
-            currentOrderItem: null,
-            scanSuccess: null,
-            modalPickingTerminated: true
-        });
+        // Plus de produits à picker, picking terminé, on maj en BDD
+        let bodyParams = new Object();
+        bodyParams.id = this.state.picking.id;
+        fetch(Constants.API_URL + '/picking/terminate', {
+            headers: {
+                'Accept': 'text/plain',
+                'Content-Type': 'application/json'
+            },
+            method: 'post',
+            body: JSON.stringify(bodyParams)
+        })
+            .then((res) => res.text())
+            .then(result => {
+                if (result) {
+                    this.setState({
+                        picking: null,
+                        currentOrderItem: null,
+                        scanSuccess: null,
+                        modalPickingTerminated: true
+                    });
+                } else {
+                    console('ERREUR FATALE : Picking non terminé en BDD')
+                }
+            }).catch((error) => console.log(error));
+
+
+
     }
 
     setPickingLoading(value) {
@@ -143,7 +160,15 @@ export default class PickingScreen extends Component {
     }
 
     generateNewPicking() {
-        
+        fetch(Constants.API_URL + '/user/' + this.state.user.id + '/generatePicking')
+            .then((res) => res.text())
+            .then(idPicking => {
+                if (parseInt(idPicking)) {
+                    resetNavigation(this, 'Picking', { user: this.state.user });
+                } else {
+                    this.setState({ modalPickingGenerationError: true });
+                }
+            }).catch((error) => console.log(error));
     }
 
     /****************
@@ -304,6 +329,20 @@ export default class PickingScreen extends Component {
         */
         return (
             <Container>
+                <View >
+                    <Modal isVisible={this.state.modalPickingGenerationError}>
+                        <View style={styles.modalContent}>
+                            <Text>
+                                Il n'y a pas de commandes à vous assigner pour le moment.
+                                </Text>
+                            <View style={styles.buttonModal}>
+                                <Button primary block style={styles.modalButton} onPress={() => this.setState({ modalPickingGenerationError: false })}>
+                                    <Text>OK</Text>
+                                </Button>
+                            </View>
+                        </View>
+                    </Modal>
+                </View>
                 <View >
                     <Modal isVisible={this.state.modalPickingTerminated}>
                         <View style={styles.modalContent}>

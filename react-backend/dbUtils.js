@@ -74,6 +74,7 @@ module.exports = {
         sqlOrderPick = 'INSERT INTO `orderpick`(`idPicking`, `idOrder`) VALUES ';
 
         db.query(sqlPicking, [idUser], function (err, resPicking) {
+            console.log(sqlPicking + ' param = ' + idUser);
             if (resPicking.affectedRows > 0) {
                 var sqlOrderPickValues = '';
                 for (var i = 0; i < idsOrder.length; i++) {
@@ -83,17 +84,22 @@ module.exports = {
                 }
                 console.log(sqlOrderPick + sqlOrderPickValues);
                 db.query(sqlOrderPick + sqlOrderPickValues, function (err, resOrdPick) {
+                    console.log(resOrdPick);
                     if (resOrdPick.affectedRows > 0) {
                         _callback(resPicking.insertId);
                     } else {
-                        console.log("[mysql error]", err);
+                        console.log("**1 [mysql error]", err);
                         _callback(null);
                     }
+                }).on('error', function (err) {
+                    console.log("**2 [mysql error]", err);
                 });
             } else {
-                console.log("[mysql error]", err);
+                console.log("**3 [mysql error]", err);
                 _callback(null);
             }
+        }).on('error', function (err) {
+            console.log("**4 [mysql error]", err);
         });
     },
 
@@ -125,14 +131,31 @@ module.exports = {
      * dans quel cas on pourra potentiellement le réassigner (cas d'un commande incompléte)
      */
     orderAlreadyAssignedToPicking(idOrder, _callback) {
-        sqlQuery = 'SELECT CASE WHEN EXISTS ( SELECT * FROM `orderpick` WHERE orderpick.idOrder = ?) THEN 1 ELSE 0 END'
-        db.query(sqlQuery, [idOrder], function (err, result) {
-            console.log('restult select case');
-            console.log(result[0]);
-            //_callback(result == 1);
+        let sqlQuery = 'CASE WHEN EXISTS ( SELECT * FROM `orderpick` WHERE orderpick.idOrder = ' + idOrder + ') THEN 1 ELSE 0 END' // On à pas accés aux ALIAS dans cette requête
+        let select = ' SELECT ';
+        db.query(select + sqlQuery, function (err, result) {
+            console.log('restult select case pour id order ' + idOrder);
+            console.log(select + sqlQuery + ' ' + idOrder);
+            console.log(result[0][sqlQuery]);
+            _callback(result[0][sqlQuery] == 1);
         }).on('error', function (err) {
             console.log("[mysql error]", err);
         });
     },
+
+    updatePickingStatus : function (idPicking, _callback) {
+        sqlupdate = 'UPDATE picking SET isFinished=1 WHERE id=?';
+        db.query(sqlupdate, [idPicking], function (err, pickingUpdated) {
+            if (pickingUpdated.affectedRows > 0) {
+                _callback(true);
+            } else {
+                console.log("[mysql error]", err);
+                _callback(null);
+            }
+        }).on('error', function (err) {
+            console.log("[mysql error]", err);
+        });
+    },
+
 
 };

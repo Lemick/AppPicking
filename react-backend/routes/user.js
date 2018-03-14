@@ -4,9 +4,12 @@ var db = require('../db');
 var dbUtils = require('../dbUtils');
 var async = require('async');
 
+// Multiplicateur permettant de calculer linéairement le poids maximal alloué à un utilisateur
+const HEALTH_MULTIPLICATOR = 0.9;
+
 
 router.get('/baba', function (req, res, next) {
-  dbUtils.orderAlreadyAssignedToPicking(4, function (res) {
+  dbUtils.orderAlreadyAssignedToPicking(5, function (res) {
 
 
   });
@@ -58,10 +61,8 @@ router.get('/:id/picking', function (req, res, next) {
  */
 router.get('/:id/generatepicking', function (req, res, next) {
 
-  // Multiplicateur permettant de calculer linéairement le poids maximal alloué à un utilisateur
-  const HEALTH_MULTIPLICATOR = 0.8;
+  res.setHeader('Content-Type', 'text/html');
 
-  res.setHeader('Content-Type', 'plain/text');
   var id = req.params.id;
 
   if (id == null) {
@@ -73,6 +74,7 @@ router.get('/:id/generatepicking', function (req, res, next) {
   db.query('SELECT * FROM userPicker WHERE id=?', [id], function (err, row) {
     var user = row[0];
     console.log(user);
+
     /**
      * TODO : On pourrait ici mettre un LIMIT pour ne pas avoir a parcourir l'ensemble des commandes pour calculer le groupements de comande
      */
@@ -82,25 +84,36 @@ router.get('/:id/generatepicking', function (req, res, next) {
       var assignedOrders = [];
       var currentWeight = 0;
 
-      for (var i = 0; i < orders.length; i++) {
-        let order = orders[i];
-        let isUnderMaxWeight = orderItemsUnderThreshold(order['orderItem'], maxWeight - currentWeight);
-        if (isUnderMaxWeight != false) {
-          assignedOrders.push(order.id);
-          currentWeight += isUnderMaxWeight;
-        }
-        console.log('assignedOrders');
-        console.log(assignedOrders);
-      }
+      async.forEachOf(orders, function (order, i, callback) {
+        console.log('je boucle sur l id order = ' + order.id)
+        dbUtils.orderAlreadyAssignedToPicking(order.id, function (alreadyAssigned) {
+          let isUnderMaxWeight = orderItemsUnderThreshold(order['orderItem'], maxWeight - currentWeight);
+          if (alreadyAssigned == false && isUnderMaxWeight != false) {
+            assignedOrders.push(order.id);
+            currentWeight += isUnderMaxWeight;
+          }
+          callback(null);
+        });
+      }, function (err) {
+        if (err) {
+          console.err(err);
 
-      dbUtils.insertPicking(user.id, assignedOrders, function (newPickingId) {
-        res.send(newPickingId.toString());
-        return;
+        } else {
+          console.log('assignedOrders');
+          console.log(assignedOrders);
+          if (assignedOrders.length > 0) {
+            dbUtils.insertPicking(user.id, assignedOrders, function (newPickingId) {
+              res.send(newPickingId.toString());
+            });
+          } else {
+            res.send("");
+          }
+        }
       });
     });
   }).on('error', (err) => console.log("[mysql error]", err));
-  res.send("");
 });
+
 
 /**
  * UTILS
@@ -113,7 +126,7 @@ function orderItemsUnderThreshold(orderItems, threshold) {
     let orderItem = orderItems[i];
     curr += orderItem.product.weight;
   }
-
+  console.log('curr = ' + curr + ' and treshold = ' + threshold);
   if (curr <= threshold)
     return curr;
   else
