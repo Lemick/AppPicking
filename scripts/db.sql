@@ -128,6 +128,16 @@ VALUES (12, 'Classeurs x5', 78, 2, 4, 3, 2, 4);
 INSERT INTO `Product` (id, name, stock, weight, alley, shelf, level, block)
 VALUES (13, 'Bureau standard chênex', 6, 80, 5, 8, 8, 4);
 
+INSERT INTO `Product` (id, name, stock, weight, alley, shelf, level, block)
+VALUES (20, 'Meuble de jardin', 5, 15, 8, 8, 8, 4);
+
+INSERT INTO `Product` (id, name, stock, weight, alley, shelf, level, block)
+VALUES (21, 'Fontaine de jardin', 6, 10, 10, 9, 7, 4);
+
+INSERT INTO `Product` (id, name, stock, weight, alley, shelf, level, block)
+VALUES (22, 'Boîte à outil de jardin', 6, 3, 8, 7, 6, 4);
+
+
 /*******************************
 *   INSERT INTO USERPICKER
 *
@@ -151,6 +161,8 @@ INSERT INTO `Order` (id, date) VALUES (2, NOW() + INTERVAL 2 HOUR);
 INSERT INTO `Order` (id, date) VALUES (3, NOW() + INTERVAL 3 HOUR);
 INSERT INTO `Order` (id, date) VALUES (4, NOW() + INTERVAL 4 HOUR);
 INSERT INTO `Order` (id, date) VALUES (5, NOW() + INTERVAL 5 HOUR);
+INSERT INTO `Order` (id, date) VALUES (10, NOW() + INTERVAL 10 HOUR);
+INSERT INTO `Order` (id, date) VALUES (11, NOW() + INTERVAL 11 HOUR);
 
 /*******************************
 *   INSERT INTO ORDERITEM
@@ -169,6 +181,14 @@ INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (4, 8, 6);
 INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (4, 7, 7);
 
 INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (5, 13, 1);
+
+
+INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (10, 20, 1);
+INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (10, 21, 1);
+
+INSERT INTO `OrderItem` (idOrder, idProduct, quantity) VALUES (11, 20, 1);
+
+
 
 /*******************************
 *   INSERT INTO ORDER PICK
