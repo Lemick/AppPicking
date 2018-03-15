@@ -46,7 +46,7 @@ router.get('/:id/picking', function (req, res, next) {
   }
 
   // Fetch picking
-  db.query('SELECT * FROM picking WHERE idUserPicker=?', [id], function (err, row) {
+  db.query('SELECT * FROM picking WHERE idUserPicker=? AND isFinished=0', [id], function (err, row) {
     if (row) {
       res.send(row[0]);
     } else {
@@ -81,7 +81,8 @@ router.get('/:id/generatepicking', function (req, res, next) {
      */
     // Fetch unprocessed with priority for the oldest orders
     dbUtils.getOrders(true, 'asc', function (orders) {
-      const maxWeight = user.health * HEALTH_MULTIPLICATOR;
+      
+      const maxWeight = user.health * HEALTH_MULTIPLICATOR; 
       var assignedOrders = [];
       var currentWeight = 0;
 
@@ -93,12 +94,14 @@ router.get('/:id/generatepicking', function (req, res, next) {
 
       var lastOrderChoosen = null;
       while (currentWeight < maxWeight) {
-        let indexNearestOrder = findNearestOrderUnderThreshold(lastOrderChoosen, orders, maxWeight - currentWeight);
+        let indexNearestOrder = findNearestOrderUnderThreshold(lastOrderChoosen, orders, maxWeight - currentWeight);  
         if (indexNearestOrder == null) {
           break; // Plus de commandes à parcourir
         } else {
           lastOrderChoosen = orders[indexNearestOrder];
           currentWeight += orderItemsWeight(lastOrderChoosen['orderItem']);
+          console.log('ADD POIDS SUIVANT');
+          console.log(currentWeight);
           assignedOrders.push(lastOrderChoosen.id);
           orders.splice(indexNearestOrder, 1);
         }
@@ -129,19 +132,18 @@ router.get('/:id/generatepicking', function (req, res, next) {
  * Retourne l'index de la commande la plus proche de la commande de base et restant sous le seuil de poids
  */
 function findNearestOrderUnderThreshold(baseOrder, orders, threshold) {
-  var indResult = -1;
   copyOrders = orders.slice(0);
 
   while (copyOrders.length > 0) {
-    let indNearest = findNearestOrder(baseOrder, copyOrders);
-    let underThreshold = orderItemsUnderThreshold(copyOrders[indNearest]['orderItem'], threshold);
+    let indNearest = findNearestOrder(baseOrder, copyOrders); 
+    let underThreshold = orderItemsUnderThreshold(copyOrders[indNearest]['orderItem'], threshold);  console.log(copyOrders[indNearest]['orderItem']);
 
     if (underThreshold != false) { // On à trouvé une commande en dessous du seuil de poids
       let pos = orders.map(function (e) { return e.id; }).indexOf(copyOrders[indNearest].id);
       return pos;
 
     } else { // La commande la plus proche est trop lourde, on la retire de la liste
-      copyOrders.splice(indResult, 1);
+      copyOrders.splice(indNearest, 1);
     }
   }
   return null;
@@ -158,13 +160,11 @@ function findNearestOrder(baseOrder, orders) {
     return -1;
 
   let baseBcenter = getCoordEntryPoint();
-  console.log(baseBcenter);
   if (baseOrder != null)
     baseBcenter = getBaryCenterOrder(baseOrder);
   let distance = Number.MAX_SAFE_INTEGER;
   let resIndex = -1;
   for (var i = 0; i < orders.length; i++) {
-    console.log(distance);
     let distanceElem = euclidianDistance(baseBcenter, getBaryCenterOrder(orders[i]));
     if (distanceElem < distance) {
       distance = distanceElem;
@@ -177,7 +177,7 @@ function findNearestOrder(baseOrder, orders) {
 
 // Retourne le poids de la commande si elle est en dessous du seuil, sinon false
 function orderItemsUnderThreshold(orderItems, threshold) {
-  var weightTotal = orderItemsWeight(orderItems);
+  var weightTotal = orderItemsWeight(orderItems); 
   if (weightTotal <= threshold)
     return weightTotal;
   else
@@ -188,7 +188,7 @@ function orderItemsWeight(orderItems) {
   var weightTotal = 0;
   for (var i = 0; i < orderItems.length; i++) {
     let orderItem = orderItems[i];
-    weightTotal += orderItem.product.weight;
+    weightTotal += orderItem.product.weight * orderItem.quantity;
   }
   return weightTotal;
 }
